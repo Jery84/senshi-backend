@@ -1,0 +1,34 @@
+# IntelliJ IDEA
+*.iws
+*.iml
+.idea/*
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+target/
+overlays/
+
+# UltraEdit
+*.bak
+
+# Eclipse
+.classpath
+.project
+.checkstyle
+.granite
+.metadata/
+
+# Windows
+Thumbs.db
+
+# Other
+bin/
+build/
+*-generated/
+
+logs/
