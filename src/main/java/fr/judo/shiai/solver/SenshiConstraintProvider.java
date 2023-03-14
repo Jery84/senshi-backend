@@ -9,7 +9,7 @@ import org.optaplanner.core.api.score.stream.Joiners;
 
 public class SenshiConstraintProvider implements ConstraintProvider {
     private static final double PERCENTAGE_WEIGHT_DIFFERENCE = 0.1;
-    private static final String WEIGHT_CONTRAINT_LABEL = "weight range";
+    private static final String WEIGHT_CONSTRAINT_LABEL = "weight range";
     private static final String CLUB_VARIETY_CONSTRAINT_LABEL = "club variety";
 
     private static final  String GENDER_CONFLICT_CONSTRAINT_LABEL = "gender conflict";
@@ -79,6 +79,6 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                         PERCENTAGE_WEIGHT_DIFFERENCE * Math.min(judoka1.getWeight(), judoka2.getWeight())
                                 < Math.abs(judoka1.getWeight() - judoka2.getWeight()))
                 .reward(HardSoftScore.ofSoft(2))
-                .asConstraint(WEIGHT_CONTRAINT_LABEL);
+                .asConstraint(WEIGHT_CONSTRAINT_LABEL);
     }
 }
