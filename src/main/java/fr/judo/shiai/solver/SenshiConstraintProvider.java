@@ -62,7 +62,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
         return constraintFactory
                 .forEachUniquePair(Judoka.class,
                         Joiners.equal(Judoka::getPool))
-                .filter((judoka1, judoka2) -> !judoka1.getClub().equals(judoka2.getClub()))
+                .filter((judoka1, judoka2) -> judoka1.getClub().equals(judoka2.getClub()))
                 .reward(HardSoftScore.ONE_SOFT)
                 .asConstraint(CLUB_VARIETY_CONSTRAINT_LABEL);
     }
@@ -77,7 +77,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                         Joiners.equal(Judoka::getPool))
                 .filter((judoka1, judoka2) ->
                         PERCENTAGE_WEIGHT_DIFFERENCE * Math.min(judoka1.getWeight(), judoka2.getWeight())
-                                < Math.abs(judoka1.getWeight() - judoka2.getWeight()))
+                                > Math.abs(judoka1.getWeight() - judoka2.getWeight()))
                 .reward(HardSoftScore.ofSoft(2))
                 .asConstraint(WEIGHT_CONSTRAINT_LABEL);
     }
