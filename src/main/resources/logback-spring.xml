@@ -2,7 +2,6 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <!--    <property name="LOG_PATH" value="${LOG_PATH}"/>-->
-    <!--    <springProfile name="dev">-->
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
@@ -20,16 +19,4 @@
             <maxHistory>2</maxHistory>
         </rollingPolicy>
     </appender>
-    <!--        <appender name="FILE_MONITOR"-->
-    <!--                  class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-    <!--            <file>${LOG_PATH}/${logging.monitor.name}</file>-->
-    <!--            <encoder>-->
-    <!--                <pattern>%msg%n</pattern>-->
-    <!--            </encoder>-->
-    <!--            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-    <!--                <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}_${logging.monitor.name}</fileNamePattern>-->
-    <!--                <maxHistory>4</maxHistory>-->
-    <!--            </rollingPolicy>-->
-    <!--        </appender>-->
-    <!--    </springProfile>-->
 </configuration>
