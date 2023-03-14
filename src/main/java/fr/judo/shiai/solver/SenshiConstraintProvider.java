@@ -29,9 +29,8 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     }
 
     /**
-     * Two judokas  must have same gender
-     * @param constraintFactory
-     * @return
+     * @param constraintFactory manage all constraints
+     * @return Two judokas  must have same gender hard constraint
      */
     Constraint genderConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
@@ -43,9 +42,8 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     }
 
     /**
-     * Two judokas  must be in the same category
-     * @param constraintFactory
-     * @return
+     * @param constraintFactory manage all constraints
+     * @return Two judokas  must be in the same category hard constraint
      */
     Constraint categoryConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
@@ -57,10 +55,8 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     }
 
     /**
-     * Ideally judokas of a same pool are from different clubs
-     *
-     * @param constraintFactory
-     * @return
+     * @param constraintFactory manage all constraints
+     * @return Ideally judokas of a same pool are from different clubs soft constraint
      */
     Constraint clubVariety(ConstraintFactory constraintFactory) {
         return constraintFactory
@@ -72,10 +68,8 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     }
 
     /**
-     * Minimum 10% weight difference between two judokas of same pool
-     *
-     * @param constraintFactory
-     * @return
+     * @param constraintFactory manage all constraints
+     * @return Minimum 10% weight difference between two judokas of same pool soft constraint
      */
     Constraint weightRange(ConstraintFactory constraintFactory) {
         return constraintFactory
