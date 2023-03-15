@@ -22,6 +22,7 @@ public class Judoka {
     private String club;
     private Category category;
 
+
     @PlanningVariable(valueRangeProviderRefs = "pools")
     private Pool pool;
 }
