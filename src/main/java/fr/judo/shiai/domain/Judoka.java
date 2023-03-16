@@ -5,6 +5,7 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -16,7 +17,7 @@ public class Judoka {
     private String license;
     private String firstName;
     private String lastName;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private double weight;
     private Gender gender;
     private String club;
