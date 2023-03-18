@@ -19,7 +19,7 @@ CREATE TABLE TBL_JUDOKA (
   license VARCHAR(50) ,
   first_name VARCHAR(250) NOT NULL,
   last_name VARCHAR(250) NOT NULL,
-  date_of_birth DATE NOT NULL,
+  date_of_birth DATE NULL,
   weight FLOAT NULL,
   gender CHAR (6) NOT NULL,
   id_category INT NULL,
