@@ -1,15 +1,20 @@
 package fr.judo.shiai.persistence;
 
+import fr.judo.shiai.domain.Club;
 import fr.judo.shiai.domain.Judoka;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 @Slf4j
 @Repository
@@ -88,5 +93,18 @@ public class JudokaRepository {
                         " WHERE id = ?;",
                 judoka.getId()
         );
+    }
+
+    @Transactional
+    public List<Judoka> getAllClubs() {
+        log.debug("Get all judokas");
+        return jdbcTemplate.query("SELECT id as id  FROM TBL_CLUB;", new RowMapper<Judoka>() {
+            public Judoka mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Judoka judoka = new Judoka();
+                judoka.setId(rs.getInt("id"));
+                judoka.setFirstName(rs.getString("name"));
+                return judoka;
+            }
+        });
     }
 }
