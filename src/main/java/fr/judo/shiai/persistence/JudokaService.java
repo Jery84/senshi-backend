@@ -31,7 +31,8 @@ public class JudokaService {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
                     .prepareStatement("insert into TBL_JUDOKA " +
-                            "(license, first_name , last_name, date_of_birth, weight, gender, id_category, id_club);");
+                            "        (license, first_name , last_name, date_of_birth, weight, gender, id_category, id_club)" +
+                            " values (     ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? ,      ?);");
             ps.setString(1, judoka.getLicense());
             ps.setString(2, judoka.getFirstName());
             ps.setString(3, judoka.getLastName());
@@ -59,7 +60,7 @@ public class JudokaService {
                         ", weight = ?" +
                         ", gender = ?" +
                         ", id_category = ?" +
-                        ", id_club = ?)" +
+                        ", id_club = ?" +
                         " where id = ?;",
                 judoka.getLicense(),
                 judoka.getFirstName(),
