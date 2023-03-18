@@ -25,7 +25,7 @@ public class ClubRepository {
     @Transactional
     public List<Club> getAllClubs() {
         log.debug("Get all clubs");
-        return jdbcTemplate.query("SELECT * FROM peopleGroup", new RowMapper<Club>() {
+        return jdbcTemplate.query("SELECT id as id, name as name  FROM TBL_CLUB;", new RowMapper<Club>() {
             public Club mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Club club = new Club();
                 club.setId(rs.getLong("id"));

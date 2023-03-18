@@ -6,13 +6,12 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @PlanningEntity
 public class Judoka {
     @PlanningId
-    private Long id;
+    private Integer id;
 
     private String license;
     private String firstName;

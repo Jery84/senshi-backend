@@ -27,14 +27,14 @@ public class JudokaRepository {
      * @return PK of created judoka
      */
     @Transactional
-    public long createJudoka(final Judoka judoka) {
+    public Integer createJudoka(final Judoka judoka) {
         log.debug("Create judoka : " + judoka.toString());
         final KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
-                    .prepareStatement("insert into TBL_JUDOKA " +
+                    .prepareStatement("INSERT INTO TBL_JUDOKA " +
                             "        (license, first_name , last_name, date_of_birth, weight, gender, id_category, id_club)" +
-                            " values (     ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? ,      ?);");
+                            " VALUES (     ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? ,      ?);");
             ps.setString(1, judoka.getLicense());
             ps.setString(2, judoka.getFirstName());
             ps.setString(3, judoka.getLastName());
@@ -45,7 +45,7 @@ public class JudokaRepository {
             ps.setString(8, judoka.getClub());
             return ps;
         }, keyHolder);
-        return (long) keyHolder.getKey();
+        return (Integer) keyHolder.getKey();
     }
 
     /**
@@ -55,7 +55,7 @@ public class JudokaRepository {
     @Transactional
     public long updateJudoka(final Judoka judoka) {
         log.debug("Update judoka : " + judoka.toString());
-        return jdbcTemplate.update("update TBL_JUDOKA " +
+        return jdbcTemplate.update("UPDATE TBL_JUDOKA " +
                         "set license = ?" +
                         ", first_name = ?" +
                         ", last_name" +
@@ -84,8 +84,8 @@ public class JudokaRepository {
     @Transactional
     public long deleteJudoka(final Judoka judoka) {
         log.debug("Delete judoka : " + judoka.toString());
-        return jdbcTemplate.update("delete TBL_JUDOKA " +
-                        " where id = ?;",
+        return jdbcTemplate.update("DELETE FROM TBL_JUDOKA " +
+                        " WHERE id = ?;",
                 judoka.getId()
         );
     }
