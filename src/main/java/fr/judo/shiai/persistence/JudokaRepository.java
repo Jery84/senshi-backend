@@ -6,18 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 
 @Slf4j
-@Service
-public class JudokaService {
+@Repository
+public class JudokaRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JudokaService(@Autowired JdbcTemplate jdbcTemplate) {
+    @Autowired
+    public JudokaRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -27,6 +28,7 @@ public class JudokaService {
      */
     @Transactional
     public long createJudoka(final Judoka judoka) {
+        log.debug("Create judoka : " + judoka.toString());
         final KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
@@ -52,6 +54,7 @@ public class JudokaService {
      */
     @Transactional
     public long updateJudoka(final Judoka judoka) {
+        log.debug("Update judoka : " + judoka.toString());
         return jdbcTemplate.update("update TBL_JUDOKA " +
                         "set license = ?" +
                         ", first_name = ?" +
@@ -80,6 +83,7 @@ public class JudokaService {
      */
     @Transactional
     public long deleteJudoka(final Judoka judoka) {
+        log.debug("Delete judoka : " + judoka.toString());
         return jdbcTemplate.update("delete TBL_JUDOKA " +
                         " where id = ?;",
                 judoka.getId()
