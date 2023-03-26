@@ -101,9 +101,9 @@ public class JudokaRepository {
     }
 
     @Transactional
-    public List<Judoka> getAllClubs() {
+    public List<Judoka> getAllJudokas() {
         log.debug("Get all judokas");
-        return jdbcTemplate.query("SELECT id as id  FROM TBL_CLUB;", new RowMapper<Judoka>() {
+        return jdbcTemplate.query("SELECT id as id  FROM TBL_JUDOKA;", new RowMapper<Judoka>() {
             public Judoka mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Judoka judoka = new Judoka();
                 judoka.setId(rs.getInt("id"));
