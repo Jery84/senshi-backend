@@ -8,7 +8,7 @@ CREATE TABLE TBL_CLUB (
 DROP TABLE IF EXISTS TBL_CATEGORY;
 
 CREATE TABLE TBL_CATEGORY (
-  cd_category CHAR(25)  PRIMARY KEY,
+  cd_category VARCHAR(25)  PRIMARY KEY,
   name VARCHAR(250) NOT NULL,
   year_min INT NOT NULL,
   year_max INT NOT NULL
@@ -22,7 +22,7 @@ CREATE TABLE TBL_JUDOKA (
   date_of_birth DATE NULL,
   weight FLOAT NULL,
   gender CHAR (6) NOT NULL,
-  cd_category CHAR(25) NULL,
+  cd_category VARCHAR(25) NULL,
   id_club INT NOT NULL
 );
 

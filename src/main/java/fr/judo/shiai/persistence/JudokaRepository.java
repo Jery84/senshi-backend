@@ -38,8 +38,13 @@ public class JudokaRepository {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
                     .prepareStatement("INSERT INTO TBL_JUDOKA " +
-                            "        (license, first_name , last_name, date_of_birth, weight, gender, id_category, id_club)" +
-                            " VALUES (     ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? ,      ?);");
+                            "        (license, first_name , last_name, date_of_birth, weight, gender, cd_category, id_club)" +
+                            " SELECT      ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? , " +
+                            "         (SELECT clb.id" +
+                            "           FROM TBL_CLUB AS clb" +
+                            "          WHERE clb.name = ?" +
+                            "          )" +
+                            "  FROM DUAL;");
             ps.setString(1, judoka.getLicense());
             ps.setString(2, judoka.getFirstName());
             ps.setString(3, judoka.getLastName());
