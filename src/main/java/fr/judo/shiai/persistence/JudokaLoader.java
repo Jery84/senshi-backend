@@ -8,7 +8,6 @@ import org.simpleflatmapper.csv.CsvParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,12 +31,13 @@ public class JudokaLoader {
                     .stream(ResourceFactory.newClassPathResource("judokas.csv").getReader())
                     .collect(Collectors.toCollection(() -> judokas));
             log.info("" + judokas.size());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            for (Judoka judoka : judokas) {
+                judokaRepository.createJudoka(judoka);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
 
         }
-        for (Judoka judoka : judokas) {
-        //    judokaRepository.createJudoka(judoka);
-        }
+
     }
 }
