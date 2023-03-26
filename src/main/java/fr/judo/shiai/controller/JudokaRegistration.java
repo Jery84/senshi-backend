@@ -25,18 +25,23 @@ public class JudokaRegistration {
         return clubRepository.getAllClubs();
     }
 
-    @PostMapping("/judokas")
+    @GetMapping("/judokas")
+    public List<Judoka> allJudokas() {
+        return clubRepository.getAllJudokas();
+    }
+
+    @PostMapping("/judoka")
     public Judoka newJudoka(@RequestBody final Judoka judoka) {
         judoka.setId(judokaRepository.createJudoka(judoka));
         return judoka;
     }
 
-    @PutMapping("/judokas/{id}")
+    @PutMapping("/judoka/{id}")
     public void updateJudoka(@RequestBody final Judoka judoka) {
         judokaRepository.updateJudoka(judoka);
     }
 
-    @DeleteMapping("/judokas/{id}")
+    @DeleteMapping("/judoka/{id}")
     public void deleteJudoka(@RequestBody final Judoka judoka) {
         judokaRepository.deleteJudoka(judoka);
     }
