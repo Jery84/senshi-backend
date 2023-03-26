@@ -1,5 +1,5 @@
 id;gender;firstName;lastName;club;dateOfBirth;weight;category
-1;MALE;Lionel;Protin;Uckange;25/10/1980;75;POUSSINETS
-2;MALE;Jeremy;Ludwig;Uckange;25/10/1980;75;POUSSINETS
-3;MALE;Ursula;Ludwig;Florange;25/10/1980;75;POUSSINS
-4;FEMALE;Ursula;Ludwig;Florange;25/10/1980;75;POUSSINS
+1;MALE;Lionel;Protin;1;25/10/1980;75;POUSSINETS
+2;MALE;Jeremy;Ludwig;1;25/10/1980;75;POUSSINETS
+3;MALE;Ursula;Ludwig;2;25/10/1980;75;POUSSINS
+4;FEMALE;Ursula;Ludwig;2;25/10/1980;75;POUSSINS

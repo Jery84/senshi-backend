@@ -12,16 +12,14 @@ import java.time.LocalDate;
 public class Judoka {
     @PlanningId
     private Integer id;
-
     private String license;
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
     private double weight;
     private Gender gender;
-    private String club;
+    private Integer club;
     private Category category;
-
 
     @PlanningVariable(valueRangeProviderRefs = "pools")
     private Pool pool;
