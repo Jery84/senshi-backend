@@ -54,7 +54,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     Constraint maxPoolSizeConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Pool.class)
-                .filter(pool -> pool.getJudokaList().size() > 4)
+                .filter(pool -> pool.getJudokaList().size() > 5)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MAX_4_CONFLICT_CONSTRAINT_LABEL);
     }
