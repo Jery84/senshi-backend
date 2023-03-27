@@ -1,13 +1,15 @@
 package fr.judo.shiai.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @PlanningEntity
 public class Judoka {
     @PlanningId
@@ -22,6 +24,6 @@ public class Judoka {
     private Category category;
     private boolean present;
 
-    @PlanningVariable(valueRangeProviderRefs = "pools")
+    @PlanningVariable(valueRangeProviderRefs = "poolRange")
     private Pool pool;
 }

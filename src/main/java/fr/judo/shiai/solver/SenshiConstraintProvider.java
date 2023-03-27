@@ -8,8 +8,6 @@ import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 import org.optaplanner.core.api.score.stream.Joiners;
 
-import static org.optaplanner.core.api.score.stream.ConstraintCollectors.count;
-
 public class SenshiConstraintProvider implements ConstraintProvider {
     private static final double PERCENTAGE_WEIGHT_DIFFERENCE = 0.1;
     private static final String WEIGHT_CONSTRAINT_LABEL = "weight range";
@@ -19,7 +17,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
 
     private static final String CATEGORY_CONFLICT_CONSTRAINT_LABEL = "category conflict";
 
-    private static final String MIN_4_CONFLICT_CONSTRAINT_LABEL = "min pool size conflict";
+    private static final String MIN_2_CONFLICT_CONSTRAINT_LABEL = "min pool size conflict";
 
     private static final String MAX_4_CONFLICT_CONSTRAINT_LABEL = "max pool size conflict";
 
@@ -41,14 +39,12 @@ public class SenshiConstraintProvider implements ConstraintProvider {
      * @param constraintFactory manage all constraints
      * @return Min 2 judokas per pool
      */
-   Constraint minPoolSizeConflict(ConstraintFactory constraintFactory) {
+    Constraint minPoolSizeConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
-                .forEach(Judoka.class)
-                .filter(judoka -> judoka.getPool() != null)
-                .groupBy(judoka -> judoka.getPool().getId(), count())
-                .filter((id, count)-> count < 2)
+                .forEach(Pool.class)
+                .filter(pool -> pool.getJudokaList().size() < 2)
                 .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint(MIN_4_CONFLICT_CONSTRAINT_LABEL);
+                .asConstraint(MIN_2_CONFLICT_CONSTRAINT_LABEL);
     }
 
     /**
@@ -56,11 +52,9 @@ public class SenshiConstraintProvider implements ConstraintProvider {
      * @return Max 4 judokas per pool
      */
     Constraint maxPoolSizeConflict(ConstraintFactory constraintFactory) {
-         return constraintFactory
-                .forEach(Judoka.class)
-                .filter(judoka -> judoka.getPool() != null)
-                .groupBy(judoka -> judoka.getPool().getId(), count())
-                .filter((id, count)-> count > 4)
+        return constraintFactory
+                .forEach(Pool.class)
+                .filter(pool -> pool.getJudokaList().size() > 4)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MAX_4_CONFLICT_CONSTRAINT_LABEL);
     }

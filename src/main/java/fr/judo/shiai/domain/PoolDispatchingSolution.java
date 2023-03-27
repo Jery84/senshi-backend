@@ -18,12 +18,9 @@ public class PoolDispatchingSolution {
     private List<Judoka> judokaList;
 
     @ProblemFactCollectionProperty
-    @ValueRangeProvider(id = "pools")
+    @ValueRangeProvider(id = "poolRange")
     private List<Pool> poolList;
-
-
 
     @PlanningScore
     private HardSoftScore score;
-
 }
