@@ -1,6 +1,7 @@
 package fr.judo.shiai.controller;
 
 import fr.judo.shiai.domain.Judoka;
+import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
 import fr.judo.shiai.persistence.JudokaRepository;
 import fr.judo.shiai.solver.SenshiSolver;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-public class Pool {
+public class PoolController {
 
     private static final int MAX_JUDOKAS_PER_POOL = 4;
 
@@ -34,24 +35,35 @@ public class Pool {
 
 
     @PostMapping("/pools")
-    public void computeAllPools() {
+    public List<Judoka> computeAllPools() {
+        PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         try {
             // Retrieve judokas
-            List<Judoka> judokas = judokaRepository.getAllJudokas();
-            PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
-            List<fr.judo.shiai.domain.Pool> poolList = new ArrayList<>();
-            for (int i = 0; i < judokas.size() / MAX_JUDOKAS_PER_POOL + 1; i++) {
-                fr.judo.shiai.domain.Pool pool = new fr.judo.shiai.domain.Pool();
-                pool.setId(Long.valueOf(i));
-                poolList.add(pool);
-            }
-            poolDispatchingSolution.setPoolList(poolList);
+            List<Judoka> judokas = judokaRepository.getAllJudokas(true);
+            // Declare pools
+            List<Pool> pools = computePoolsList(judokas.size());
+            // Declare problem/solution container
+            poolDispatchingSolution.setPoolList(pools);
             poolDispatchingSolution.setJudokaList(judokas);
-            senshiSolver.solve(poolDispatchingSolution);
+            poolDispatchingSolution = senshiSolver.solve(poolDispatchingSolution);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+        return poolDispatchingSolution.getJudokaList();
     }
 
-
+    /**
+     *
+     * @param judokasCount
+     * @return
+     */
+    private List<Pool> computePoolsList(final int judokasCount) {
+        List<Pool> poolList = new ArrayList<>();
+        for (int i = 0; i < judokasCount / MAX_JUDOKAS_PER_POOL + 1; i++) {
+            Pool pool = new Pool();
+            pool.setId(Long.valueOf(i));
+            poolList.add(pool);
+        }
+        return poolList;
+    }
 }
