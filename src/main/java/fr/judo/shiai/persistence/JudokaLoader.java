@@ -30,7 +30,6 @@ public class JudokaLoader {
                                     .newMapper(Judoka.class))
                     .stream(ResourceFactory.newClassPathResource("judokas.csv").getReader())
                     .collect(Collectors.toCollection(() -> judokas));
-            log.info("" + judokas.size());
             for (Judoka judoka : judokas) {
                 judokaRepository.createJudoka(judoka);
             }
@@ -38,6 +37,6 @@ public class JudokaLoader {
             log.error(e.getMessage());
 
         }
-
+        log.info(judokas.size() + " have been loaded");
     }
 }
