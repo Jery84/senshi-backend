@@ -7,7 +7,6 @@ import fr.judo.shiai.persistence.JudokaRepository;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,15 +22,9 @@ public class PoolController {
     @Autowired
     private JudokaRepository judokaRepository;
 
+
     @Autowired
     private SenshiSolver senshiSolver;
-
-
-    @GetMapping("/pools")
-    public List<Judoka> allClubs() {
-        //return clubRepository.getAllClubs();
-        return new ArrayList<>();
-    }
 
 
     @PostMapping("/pools")
@@ -53,7 +46,6 @@ public class PoolController {
     }
 
     /**
-     *
      * @param judokasCount
      * @return
      */

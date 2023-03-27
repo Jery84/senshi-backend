@@ -39,7 +39,7 @@ public class JudokaRepository {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
                     .prepareStatement("INSERT INTO TBL_JUDOKA " +
-                            "        (license, first_name , last_name, date_of_birth, weight, gender, cd_category, id_club, FL_PRESENT)" +
+                            "        (LICENSE, FIRST_NAME , LAST_NAME, DATE_OF_BIRTH, WEIGHT, GENDER, CD_CATEGORY, ID_CLUB, FL_PRESENT)" +
                             " VALUES (     ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? ,      ?,    ?     );");
             ps.setString(1, judoka.getLicense());
             ps.setString(2, judoka.getFirstName());
@@ -63,15 +63,16 @@ public class JudokaRepository {
     public long updateJudoka(final Judoka judoka) {
         log.debug("Update judoka : " + judoka.toString());
         return jdbcTemplate.update("UPDATE TBL_JUDOKA " +
-                        "set license = ?" +
-                        ", first_name = ?" +
-                        ", last_name" +
-                        ", date_of_birth = ?" +
-                        ", weight = ?" +
-                        ", gender = ?" +
-                        ", id_category = ?" +
-                        ", id_club = ?" +
-                        " where id = ?;",
+                        "SET LICENSE = ?" +
+                        ", FIRST_NAME = ?" +
+                        ", LAST_NME = ?" +
+                        ", DATE_OF_BIRTH = ?" +
+                        ", WEIGHT = ?" +
+                        ", GENDER = ?" +
+                        ", ID_CATEGORY = ?" +
+                        ", ID_CLUB = ?" +
+                        ", FL_PRESENT = ?" +
+                        " WHERE ID = ?;",
                 judoka.getLicense(),
                 judoka.getFirstName(),
                 judoka.getLastName(),
@@ -80,6 +81,7 @@ public class JudokaRepository {
                 judoka.getGender().toString(),
                 judoka.getCategory().toString(),
                 judoka.getClub(),
+                (judoka.isPresent() ? "Y" : "N"),
                 judoka.getId()
         );
     }
