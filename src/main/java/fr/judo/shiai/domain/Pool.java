@@ -8,6 +8,6 @@ import java.util.Collection;
 public class Pool {
 
     private Long id;
-    private String title;
-    private Collection<Judoka> players;
+
+    private Category category;
 }
