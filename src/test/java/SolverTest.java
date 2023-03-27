@@ -40,7 +40,7 @@ class SolverTest {
             throw new RuntimeException(e);
         }
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < judokas.size() / 4 + 1; i++) {
             Pool pool = new Pool();
             pool.setId(Long.valueOf(i));
             poolList.add(pool);
@@ -52,8 +52,7 @@ class SolverTest {
 
     public static void printSolution(PoolDispatchingSolution poolDispatchingSolution) {
         for (Judoka judoka : poolDispatchingSolution.getJudokaList()) {
-            log.info("Id " + judoka.getPool().getId());
-
+            log.info("Pool Id : " + judoka.getPool().getId() + " Judoka Id : " + judoka.getId());
         }
     }
 

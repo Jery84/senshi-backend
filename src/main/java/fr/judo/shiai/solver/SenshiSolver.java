@@ -1,6 +1,7 @@
 package fr.judo.shiai.solver;
 
 import fr.judo.shiai.domain.Judoka;
+import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
 import lombok.extern.slf4j.Slf4j;
 import org.optaplanner.core.api.solver.Solver;

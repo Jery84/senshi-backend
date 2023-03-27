@@ -37,16 +37,16 @@ public class SenshiConstraintProvider implements ConstraintProvider {
         };
     }
 
-
     /**
      * @param constraintFactory manage all constraints
      * @return Min 2 judokas per pool
      */
-    Constraint minPoolSizeConflict(ConstraintFactory constraintFactory) {
-
+   Constraint minPoolSizeConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
-                .forEach(Pool.class)
-                .filter(pool -> pool.getJudokas().size() > 2)
+                .forEach(Judoka.class)
+                .filter(judoka -> judoka.getPool() != null)
+                .groupBy(judoka -> judoka.getPool().getId(), count())
+                .filter((id, count)-> count < 2)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MIN_4_CONFLICT_CONSTRAINT_LABEL);
     }
@@ -56,10 +56,11 @@ public class SenshiConstraintProvider implements ConstraintProvider {
      * @return Max 4 judokas per pool
      */
     Constraint maxPoolSizeConflict(ConstraintFactory constraintFactory) {
-
-        return constraintFactory
-                .forEach(Pool.class)
-                .filter(pool -> pool.getJudokas().size() < 5)
+         return constraintFactory
+                .forEach(Judoka.class)
+                .filter(judoka -> judoka.getPool() != null)
+                .groupBy(judoka -> judoka.getPool().getId(), count())
+                .filter((id, count)-> count > 4)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MAX_4_CONFLICT_CONSTRAINT_LABEL);
     }
