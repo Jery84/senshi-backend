@@ -94,7 +94,7 @@ public class JudokaRepository {
     public long deleteJudoka(final Judoka judoka) {
         log.debug("Delete judoka : " + judoka.toString());
         return jdbcTemplate.update("DELETE FROM TBL_JUDOKA " +
-                        " WHERE id = ?;",
+                        " WHERE ID = ?;",
                 judoka.getId()
         );
     }
