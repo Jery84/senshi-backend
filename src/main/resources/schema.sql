@@ -22,6 +22,7 @@ CREATE TABLE TBL_JUDOKA (
   date_of_birth DATE NULL,
   weight FLOAT NULL,
   gender CHAR (6) NOT NULL,
+  fl_present CHAR(1) NOT NULL,
   cd_category VARCHAR(25) NULL,
   id_club INT NOT NULL
 );

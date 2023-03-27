@@ -1,7 +1,6 @@
 package fr.judo.shiai.persistence;
 
 import fr.judo.shiai.domain.Category;
-import fr.judo.shiai.domain.Club;
 import fr.judo.shiai.domain.Gender;
 import fr.judo.shiai.domain.Judoka;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +39,8 @@ public class JudokaRepository {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
                     .prepareStatement("INSERT INTO TBL_JUDOKA " +
-                            "        (license, first_name , last_name, date_of_birth, weight, gender, cd_category, id_club)" +
-                            " VALUES (     ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? , ?     );");
+                            "        (license, first_name , last_name, date_of_birth, weight, gender, cd_category, id_club, FL_PRESENT)" +
+                            " VALUES (     ? ,          ? ,         ? ,            ? ,     ? ,     ? ,          ? ,      ?,    ?     );");
             ps.setString(1, judoka.getLicense());
             ps.setString(2, judoka.getFirstName());
             ps.setString(3, judoka.getLastName());
@@ -50,6 +49,7 @@ public class JudokaRepository {
             ps.setString(6, judoka.getGender().toString());
             ps.setString(7, judoka.getCategory().toString());
             ps.setInt(8, judoka.getClub());
+            ps.setString(9, (judoka.isPresent() ? "Y" : "N"));
             return ps;
         }, keyHolder);
         return (Integer) keyHolder.getKey();
@@ -98,9 +98,9 @@ public class JudokaRepository {
     }
 
     @Transactional
-    public List<Judoka> getAllJudokas() {
+    public List<Judoka> getAllJudokas(final boolean isPresent) {
         log.debug("Get all judokas");
-        return jdbcTemplate.query("SELECT ID" +
+        String statement = "SELECT ID" +
                 "                           , LICENSE" +
                 "                           , FIRST_NAME" +
                 "                           , LAST_NAME" +
@@ -109,7 +109,13 @@ public class JudokaRepository {
                 "                           , TRIM(GENDER) AS GENDER" +
                 "                           , TRIM(CD_CATEGORY) AS CD_CATEGORY" +
                 "                           , ID_CLUB" +
-                "                        FROM TBL_JUDOKA;", new RowMapper<Judoka>() {
+                "                           , FL_PRESENT" +
+                "                        FROM TBL_JUDOKA";
+        if (isPresent) {
+            statement = statement + " WHERE FL_PRESENT = 'Y'";
+        }
+        statement = statement + ";";
+        return jdbcTemplate.query(statement, new RowMapper<Judoka>() {
             public Judoka mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Judoka judoka = new Judoka();
                 judoka.setId(rs.getInt("ID"));
@@ -121,8 +127,11 @@ public class JudokaRepository {
                 judoka.setGender(Gender.valueOf(rs.getString("GENDER")));
                 judoka.setCategory(Category.valueOf(rs.getString("CD_CATEGORY")));
                 judoka.setClub(rs.getInt("ID_CLUB"));
+                judoka.setPresent(rs.getBoolean("FL_PRESENT"));
                 return judoka;
             }
         });
     }
+
+
 }

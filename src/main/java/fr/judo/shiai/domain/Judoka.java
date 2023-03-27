@@ -20,6 +20,7 @@ public class Judoka {
     private Gender gender;
     private Integer club;
     private Category category;
+    private boolean present;
 
     @PlanningVariable(valueRangeProviderRefs = "pools")
     private Pool pool;
