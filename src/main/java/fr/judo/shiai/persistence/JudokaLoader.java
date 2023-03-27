@@ -37,6 +37,6 @@ public class JudokaLoader {
             log.error(e.getMessage());
 
         }
-        log.info(judokas.size() + " have been loaded");
+        log.info(judokas.size() + " judokas have been loaded");
     }
 }
