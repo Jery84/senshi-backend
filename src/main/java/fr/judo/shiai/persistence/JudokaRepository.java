@@ -65,12 +65,13 @@ public class JudokaRepository {
         return jdbcTemplate.update("UPDATE TBL_JUDOKA " +
                         "set license = ?" +
                         ", first_name = ?" +
-                        ", last_name" +
+                        ", last_name = ?" +
                         ", date_of_birth = ?" +
                         ", weight = ?" +
                         ", gender = ?" +
-                        ", id_category = ?" +
+                        ", cd_category = ?" +
                         ", id_club = ?" +
+                        ", fl_present = ?" +
                         " where id = ?;",
                 judoka.getLicense(),
                 judoka.getFirstName(),
@@ -80,6 +81,7 @@ public class JudokaRepository {
                 judoka.getGender().toString(),
                 judoka.getCategory().toString(),
                 judoka.getClub(),
+                judoka.isPresent() ? 'Y': 'N',
                 judoka.getId()
         );
     }
