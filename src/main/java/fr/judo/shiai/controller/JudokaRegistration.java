@@ -28,7 +28,7 @@ public class JudokaRegistration {
 
     @GetMapping("/judokas")
     public List<Judoka> allJudokas() {
-        return judokaRepository.getAllJudokas(false);
+        return judokaRepository.getAllEligibleJudokas(false);
     }
 
     @PostMapping("/judoka")

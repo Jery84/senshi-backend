@@ -100,8 +100,8 @@ public class JudokaRepository {
     }
 
     @Transactional
-    public List<Judoka> getAllJudokas(final boolean isPresent) {
-        log.debug("Get all judokas");
+    public List<Judoka> getAllEligibleJudokas(final boolean isEligible) {
+        log.debug("Get all eligible judokas");
         String statement = "SELECT ID" +
                 "                           , LICENSE" +
                 "                           , FIRST_NAME" +
@@ -113,8 +113,8 @@ public class JudokaRepository {
                 "                           , ID_CLUB" +
                 "                           , FL_PRESENT" +
                 "                        FROM TBL_JUDOKA";
-        if (isPresent) {
-            statement = statement + " WHERE FL_PRESENT = 'Y'";
+        if (isEligible) {
+            statement = statement + " WHERE FL_PRESENT = 'Y' AND WEIGHT IS NOT NULL AND WEIGHT != 0";
         }
         statement = statement + ";";
         return jdbcTemplate.query(statement, new RowMapper<Judoka>() {
