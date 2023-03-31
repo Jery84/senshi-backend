@@ -1,5 +1,6 @@
 package fr.judo.shiai.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @PlanningEntity
+@JsonIgnoreProperties(value = { "pool" })
 public class Judoka {
     @PlanningId
     private Integer id;

@@ -28,7 +28,7 @@ public class PoolController {
 
 
     @PostMapping("/pools")
-    public List<Judoka> computeAllPools() {
+    public List<Pool> computeAllPools() {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         try {
             // Retrieve judokas
@@ -42,7 +42,7 @@ public class PoolController {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        return poolDispatchingSolution.getJudokaList();
+        return poolDispatchingSolution.getPoolList();
     }
 
     /**
