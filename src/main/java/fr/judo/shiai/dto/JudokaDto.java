@@ -13,7 +13,7 @@ public class JudokaDto {
     private String birthDate;
     private Double weight;
     private Gender gender;
-    private Integer club;
+    private Long club;
     private String category;
     private String license;
     private Boolean present;
