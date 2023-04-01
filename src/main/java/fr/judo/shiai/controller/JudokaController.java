@@ -3,7 +3,6 @@ package fr.judo.shiai.controller;
 import fr.judo.shiai.domain.Judoka;
 import fr.judo.shiai.dto.JudokaDto;
 import fr.judo.shiai.mappers.JudokaMapper;
-import fr.judo.shiai.repository.CategoryRepository;
 import fr.judo.shiai.repository.JudokaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,6 @@ public class JudokaController {
     @Autowired
     private JudokaMapper judokaMapper;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
     @GetMapping("judoka")
     public Iterable<Judoka> findAll() {
         return judokaRepository.findAll();
@@ -35,8 +31,21 @@ public class JudokaController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Judoka> create(@RequestBody JudokaDto judokaDto) {
-        Judoka created = judokaRepository.save(judokaMapper.judokaDtoToJudoka(judokaDto, categoryRepository));
+        Judoka created = judokaRepository.save(judokaMapper.judokaDtoToJudoka(judokaDto));
         return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @PutMapping(path = "judoka/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Judoka> update(@RequestBody JudokaDto judokaDto) {
+
+        Judoka updated = judokaRepository.findById(judokaDto.getId()).get();
+        updated.setWeight(judokaDto.getWeight());
+        updated.setPresent(judokaDto.getPresent());
+        judokaRepository.save(updated);
+
+        return new ResponseEntity<>(updated, HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("judoka/{id}")

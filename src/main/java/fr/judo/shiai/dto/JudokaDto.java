@@ -8,6 +8,8 @@ import lombok.Data;
  */
 @Data
 public class JudokaDto {
+
+    private Integer id;
     private String firstName;
     private String lastName;
     private String birthDate;

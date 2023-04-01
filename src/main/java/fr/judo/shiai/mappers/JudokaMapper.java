@@ -18,5 +18,5 @@ public abstract class JudokaMapper {
 
     @Mapping(target="category", expression = "java(categoryRepository.findById(source.getCategory()).get())")
     @Mapping(target="club", expression = "java(clubRepository.findById(source.getClub()).get())")
-    public abstract Judoka judokaDtoToJudoka(JudokaDto source, @Context CategoryRepository categoryRepository);
+    public abstract Judoka judokaDtoToJudoka(JudokaDto source);
 }
