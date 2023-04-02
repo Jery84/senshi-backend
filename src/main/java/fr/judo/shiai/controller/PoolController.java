@@ -32,7 +32,7 @@ public class PoolController {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         try {
             // Retrieve judokas
-            List<Judoka> judokas = judokaRepository.findAllPresentandWeightedJudoka();
+            List<Judoka> judokas = judokaRepository.findAllPresentAndWeightedJudoka();
             log.info("Judokas available : " + judokas.size());
             // Declare pools
             List<Pool> pools = computePoolsList(judokas.size());

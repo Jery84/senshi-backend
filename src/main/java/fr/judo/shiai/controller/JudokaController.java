@@ -23,15 +23,15 @@ public class JudokaController {
     private JudokaMapper judokaMapper;
 
     @GetMapping("judoka")
-    public Iterable<Judoka> findAll() {
-        return judokaRepository.findAll();
+    public Iterable<JudokaDto> findAll() {
+        return judokaMapper.toDto(judokaRepository.findAll());
     }
 
     @PostMapping(path = "judoka",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Judoka> create(@RequestBody JudokaDto judokaDto) {
-        Judoka created = judokaRepository.save(judokaMapper.judokaDtoToJudoka(judokaDto));
+        Judoka created = judokaRepository.save(judokaMapper.toEntity(judokaDto));
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 

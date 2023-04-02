@@ -15,12 +15,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.BiConsumer;
 
 @Service
 @Slf4j
@@ -35,87 +40,37 @@ public class LoaderService {
     @Autowired
     private JudokaRepository judokaRepository;
 
+    private static final String CATEGORY_FILE_PATH = "data/categories.csv";
+    private static final String CLUBS_FILE_PATH = "data/clubs.csv";
+    private static final String JUDOKAS_FILE_PATH = "data/judokas.csv";
+
     public void load() {
         log.info("Loading data");
-        loadClubs();
-        loadCategories();
-        loadJudokas();
-    }
 
-    private void loadClubs() {
-        try {
-            ClassPathResource resource = new ClassPathResource("data/clubs.csv");
-            InputStream inputStream = resource.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            CSVReader csvReader = new CSVReaderBuilder(bufferedReader)
-                    .withSkipLines(1)
-                    .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
-                    .build();
-
-            String[] ligne;
-            Collection<Club> clubs = new ArrayList<>();
-            while ((ligne = csvReader.readNext()) != null) {
-                clubs.add(Club.builder().name(ligne[0]).build());
-            }
-            clubRepository.saveAll(clubs);
-            log.info(clubs.size() + " clubs defined");
-            csvReader.close();
-        } catch (CsvValidationException | IOException e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-        }
-    }
-
-    private void loadCategories() {
-        try {
-            ClassPathResource resource = new ClassPathResource("data/categories.csv");
-            InputStream inputStream = resource.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            CSVReader csvReader = new CSVReaderBuilder(bufferedReader)
-                    .withSkipLines(1)
-                    .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
-                    .build();
-
-            String[] ligne;
-            Collection<Category> categories = new ArrayList<>();
-            while ((ligne = csvReader.readNext()) != null) {
+        // load the categories
+        genericLoad(CATEGORY_FILE_PATH, Category.class, categoryRepository, new BiConsumer<String[], Collection<Category>>() {
+            @Override
+            public void accept(String[] ligne, Collection<Category> categories) {
                 categories.add(Category.builder()
                         .name(ligne[0])
                         .yearMin(Integer.parseInt(ligne[1]))
                         .yearMax(Integer.parseInt(ligne[2]))
                         .build());
             }
-            categoryRepository.saveAll(categories);
-            log.info(categories.size() + " categories defined");
-            csvReader.close();
-        } catch (CsvValidationException | IOException e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-        }
-    }
+        });
 
-    private void loadJudokas() {
-        try {
-            ClassPathResource resource = new ClassPathResource("data/judokas.csv");
-            InputStream inputStream = resource.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        // load the clubs
+        genericLoad(CLUBS_FILE_PATH, Club.class, clubRepository, new BiConsumer<String[], Collection<Club>>() {
+            @Override
+            public void accept(String[] ligne, Collection<Club> clubs) {
+                clubs.add(Club.builder().name(ligne[0]).build());
+            }
+        });
 
-            CSVReader csvReader = new CSVReaderBuilder(bufferedReader)
-                    .withSkipLines(1)
-                    .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
-                    .build();
-
-            String[] ligne;
-            Collection<Judoka> judokas = new ArrayList<>();
-            while ((ligne = csvReader.readNext()) != null) {
-
-                //                id;gender;firstName;lastName;club;birthDate;weight;license;category;present
-
+        // load the judokas
+        genericLoad(JUDOKAS_FILE_PATH, Judoka.class, judokaRepository, new BiConsumer<String[], Collection<Judoka>>() {
+            @Override
+            public void accept(String[] ligne, Collection<Judoka> judokas) {
                 judokas.add(Judoka.builder()
                         .id(Integer.parseInt(ligne[0]))
                         .gender(Gender.valueOf(ligne[1]))
@@ -129,8 +84,30 @@ public class LoaderService {
                         .present(ligne[9].equals("Y"))
                         .build());
             }
-            judokaRepository.saveAll(judokas);
-            log.info(judokas.size() + " judokas loaded");
+        });
+    }
+
+
+
+    private <T> void genericLoad(String filePath, Class<T> categoryClass, CrudRepository repository, BiConsumer<String[], Collection<T>> lambda) {
+        try {
+            ClassPathResource resource = new ClassPathResource(filePath);
+            InputStream inputStream = resource.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            CSVReader csvReader = new CSVReaderBuilder(bufferedReader)
+                    .withSkipLines(1)
+                    .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
+                    .build();
+
+            String[] ligne;
+            Collection<T> records = new ArrayList<>();
+            while ((ligne = csvReader.readNext()) != null) {
+                lambda.accept(ligne, records);
+            }
+            repository.saveAll(records);
+            log.info(records.size() + " '" + categoryClass.getSimpleName() + "' loaded");
             csvReader.close();
         } catch (CsvValidationException | IOException e) {
             e.printStackTrace();
