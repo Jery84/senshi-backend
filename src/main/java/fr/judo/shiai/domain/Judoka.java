@@ -34,8 +34,8 @@ public class Judoka {
     @Column(name = "birthDate")
     private LocalDate birthDate;
 
-    @Column(name = "weight")
-    private double weight;
+    @Column(name = "weight", nullable = true)
+    private Double weight;
 
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)

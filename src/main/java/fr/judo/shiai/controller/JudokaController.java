@@ -38,9 +38,9 @@ public class JudokaController {
     @PutMapping(path = "judoka/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Judoka> update(@RequestBody JudokaDto judokaDto) {
+    public ResponseEntity<Judoka> update(@PathVariable Integer id, @RequestBody JudokaDto judokaDto) {
 
-        Judoka updated = judokaRepository.findById(judokaDto.getId()).get();
+        Judoka updated = judokaRepository.findById(id).get();
         updated.setWeight(judokaDto.getWeight());
         updated.setPresent(judokaDto.getPresent());
         judokaRepository.save(updated);
