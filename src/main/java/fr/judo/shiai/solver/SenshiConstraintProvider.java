@@ -111,7 +111,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                 .filter((judoka1, judoka2) ->
                         PERCENTAGE_WEIGHT_DIFFERENCE * Math.min(judoka1.getWeight(), judoka2.getWeight())
                                 > Math.abs(judoka1.getWeight() - judoka2.getWeight()))
-                .reward(HardSoftScore.ONE_HARD)
+                .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(WEIGHT_CONSTRAINT_LABEL);
     }
 }
