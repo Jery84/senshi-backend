@@ -40,7 +40,7 @@ class SolverTest {
             throw new RuntimeException(e);
         }
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < judokas.size() / 4 + 1; i++) {
+        for (int i = 0; i < judokas.size() / 4 + 50; i++) {
             Pool pool = new Pool();
             pool.setId(Long.valueOf(i));
             poolList.add(pool);
