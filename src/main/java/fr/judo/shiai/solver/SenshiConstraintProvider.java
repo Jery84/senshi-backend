@@ -26,12 +26,12 @@ public class SenshiConstraintProvider implements ConstraintProvider {
         return new Constraint[]{
                 // Hard constraints
                 genderConflict(constraintFactory),
+                weightRange(constraintFactory),
                 categoryConflict(constraintFactory),
                 minPoolSizeConflict(constraintFactory),
-                maxPoolSizeConflict(constraintFactory),
-                weightRange(constraintFactory),
+                maxPoolSizeConflict(constraintFactory)
                 // Soft constraints
-                clubVariety(constraintFactory)
+              //  clubVariety(constraintFactory)
 
         };
     }
@@ -105,6 +105,9 @@ public class SenshiConstraintProvider implements ConstraintProvider {
      * @return Minimum 10% weight difference between two judokas of same pool soft constraint
      */
     Constraint weightRange(ConstraintFactory constraintFactory) {
+        //TODO min max judoka'weight must comes from pool object
+        // and not from a cmparison between to random judokas
+        // from the same pool
         return constraintFactory
                 .forEachUniquePair(Judoka.class,
                         Joiners.equal(Judoka::getPool))

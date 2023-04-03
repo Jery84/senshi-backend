@@ -25,7 +25,7 @@ public class SenshiSolver {
                 .withConstraintProviderClass(SenshiConstraintProvider.class)
                 // The solver runs only for 5 seconds on this small dataset.
                 // It's recommended to run for at least 5 minutes ("5m") otherwise.
-                .withTerminationSpentLimit(Duration.ofSeconds(10)));
+                .withTerminationSpentLimit(Duration.ofSeconds(30)));
     }
 
     public PoolDispatchingSolution solve(final PoolDispatchingSolution problem) {
