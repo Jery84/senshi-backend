@@ -51,8 +51,11 @@ class SolverTest {
     }
 
     public static void printSolution(PoolDispatchingSolution poolDispatchingSolution) {
-        for (Judoka judoka : poolDispatchingSolution.getJudokaList()) {
-            log.info("Pool Id : " + judoka.getPool().getId() + " Judoka Id : " + judoka.getId());
+        for (Pool pool : poolDispatchingSolution.getPoolList()) {
+            log.info("Pool " + pool.getId());
+            for (Judoka judoka : pool.getJudokaList()) {
+                log.info("--> " + judoka.getWeight() + " " + judoka.getFirstName() + " " + judoka.getLastName());
+            }
         }
     }
 
