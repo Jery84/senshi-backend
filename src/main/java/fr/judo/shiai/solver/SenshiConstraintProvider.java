@@ -31,7 +31,8 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                 minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
-                clubVariety(constraintFactory)
+                clubVariety(constraintFactory),
+                preferedPoolSizeConflict(constraintFactory)
 
         };
     }
@@ -113,5 +114,17 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(WEIGHT_CONSTRAINT_LABEL);
 
+    }
+
+    /**
+     * @param constraintFactory manage all constraints
+     * @return Min 2 judokas per pool
+     */
+    Constraint preferedPoolSizeConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(Pool.class)
+                .filter(pool -> pool.getJudokaList().size() == 4)
+                .reward(HardSoftScore.ONE_SOFT)
+                .asConstraint("Preferred pool size is 4");
     }
 }
