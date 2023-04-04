@@ -9,7 +9,11 @@ import org.optaplanner.core.api.score.stream.ConstraintProvider;
 import org.optaplanner.core.api.score.stream.Joiners;
 
 public class SenshiConstraintProvider implements ConstraintProvider {
-    private static final double PERCENTAGE_WEIGHT_DIFFERENCE = 0.1;
+
+    private static final int MAXPREFERED_POOL_SIZE = 4;
+
+    private static final int MIN_POOL_SIZE = 4;
+
     private static final String WEIGHT_CONSTRAINT_LABEL = "weight range";
     private static final String CLUB_VARIETY_CONSTRAINT_LABEL = "club variety";
 
@@ -20,18 +24,22 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     private static final String MIN_2_CONFLICT_CONSTRAINT_LABEL = "min pool size conflict";
 
     private static final String MAX_4_CONFLICT_CONSTRAINT_LABEL = "max pool size conflict";
+    private static final String PREFERED_POOL_SIZE_LABEL = "Preferred pool size is 4";
+    private static final int MAX_WEIGHT_DIFFERENCE = 3;
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
-                genderConflict(constraintFactory),
-                categoryConflict(constraintFactory),
+                // genderConflict(constraintFactory),
+                weightRangeConflict(constraintFactory),
+                //categoryConflict(constraintFactory),
                 minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
                 clubVariety(constraintFactory),
-                weightRange(constraintFactory)
+                preferedPoolSize(constraintFactory)
+
         };
     }
 
@@ -42,7 +50,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     Constraint minPoolSizeConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Pool.class)
-                .filter(pool -> pool.getJudokaList().size() < 2)
+                .filter(pool -> pool.getJudokaList().size() < MIN_POOL_SIZE)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MIN_2_CONFLICT_CONSTRAINT_LABEL);
     }
@@ -54,7 +62,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     Constraint maxPoolSizeConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Pool.class)
-                .filter(pool -> pool.getJudokaList().size() > 5)
+                .filter(pool -> pool.getJudokaList().size() > MAXPREFERED_POOL_SIZE)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MAX_4_CONFLICT_CONSTRAINT_LABEL);
     }
@@ -86,6 +94,35 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                 .asConstraint(CATEGORY_CONFLICT_CONSTRAINT_LABEL);
     }
 
+
+    /**
+     * @param constraintFactory manage all constraints
+     * @return Maximum 3 kg weight difference between two judokas of same pool hard constraint
+     */
+    Constraint weightRangeConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Judoka.class,
+                        Joiners.equal(Judoka::getPool))
+                .filter((judoka1, judoka2) ->
+                        MAX_WEIGHT_DIFFERENCE
+                                < Math.abs(judoka1.getWeight() - judoka2.getWeight()))
+                .penalize(HardSoftScore.ONE_HARD)
+                .asConstraint(WEIGHT_CONSTRAINT_LABEL);
+
+    }
+
+    /**
+     * @param constraintFactory manage all constraints
+     * @return Min 2 judokas per pool
+     */
+    Constraint preferedPoolSize(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(Pool.class)
+                .filter(pool -> pool.getJudokaList().size() == MAXPREFERED_POOL_SIZE)
+                .reward(HardSoftScore.ONE_SOFT)
+                .asConstraint(PREFERED_POOL_SIZE_LABEL);
+    }
+
     /**
      * @param constraintFactory manage all constraints
      * @return Ideally judokas of a same pool are from different clubs soft constraint
@@ -94,23 +131,9 @@ public class SenshiConstraintProvider implements ConstraintProvider {
         return constraintFactory
                 .forEachUniquePair(Judoka.class,
                         Joiners.equal(Judoka::getPool))
-                .filter((judoka1, judoka2) -> judoka1.getClub().equals(judoka2.getClub()))
+                .filter((judoka1, judoka2) -> !judoka1.getClub().equals(judoka2.getClub()))
                 .reward(HardSoftScore.ONE_SOFT)
                 .asConstraint(CLUB_VARIETY_CONSTRAINT_LABEL);
     }
 
-    /**
-     * @param constraintFactory manage all constraints
-     * @return Minimum 10% weight difference between two judokas of same pool soft constraint
-     */
-    Constraint weightRange(ConstraintFactory constraintFactory) {
-        return constraintFactory
-                .forEachUniquePair(Judoka.class,
-                        Joiners.equal(Judoka::getPool))
-                .filter((judoka1, judoka2) ->
-                        PERCENTAGE_WEIGHT_DIFFERENCE * Math.min(judoka1.getWeight(), judoka2.getWeight())
-                                > Math.abs(judoka1.getWeight() - judoka2.getWeight()))
-                .reward(HardSoftScore.ofSoft(2))
-                .asConstraint(WEIGHT_CONSTRAINT_LABEL);
-    }
 }
