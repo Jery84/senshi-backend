@@ -3,10 +3,13 @@ package fr.judo.shiai.controller;
 import fr.judo.shiai.domain.Judoka;
 import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
+import fr.judo.shiai.dto.PoolDto;
+import fr.judo.shiai.mappers.PoolMapper;
 import fr.judo.shiai.repository.JudokaRepository;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@CrossOrigin
 @RestController
 public class PoolController {
 
@@ -26,9 +30,11 @@ public class PoolController {
     @Autowired
     private SenshiSolver senshiSolver;
 
+    @Autowired
+    private PoolMapper poolMapper;
 
     @PostMapping("/pools")
-    public List<Pool> computeAllPools() {
+    public Iterable<PoolDto> computeAllPools() {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         try {
             // Retrieve judokas
@@ -43,7 +49,7 @@ public class PoolController {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        return poolDispatchingSolution.getPoolList();
+        return poolMapper.toDto(poolDispatchingSolution.getPoolList());
     }
 
     /**
