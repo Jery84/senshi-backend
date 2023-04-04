@@ -33,14 +33,14 @@ class SolverTest {
                                     .newInstance()
                                     .defaultDateFormat("dd/MM/yyyy")
                                     .newMapper(Judoka.class))
-                    .stream(ResourceFactory.newClassPathResource("judokas.csv").getReader())
+                    .stream(ResourceFactory.newClassPathResource("Poussins.csv").getReader())
                     .collect(Collectors.toCollection(() -> judokas));
             log.info("" + judokas.size());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < judokas.size() / 4; i++) {
+        for (int i = 0; i < judokas.size() / 4 + 1; i++) {
             Pool pool = new Pool();
             pool.setId(Long.valueOf(i));
             poolList.add(pool);

@@ -20,14 +20,15 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     private static final String MIN_2_CONFLICT_CONSTRAINT_LABEL = "min pool size conflict";
 
     private static final String MAX_4_CONFLICT_CONSTRAINT_LABEL = "max pool size conflict";
+    private static final String PREFERED_POOL_SIZE_LABEL = "Preferred pool size is 4";
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
-                genderConflict(constraintFactory),
+               // genderConflict(constraintFactory),
                 weightRangeConflict(constraintFactory),
-                categoryConflict(constraintFactory),
+                //categoryConflict(constraintFactory),
                 minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
@@ -99,7 +100,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                         Joiners.equal(Judoka::getPool))
                 .filter((judoka1, judoka2) ->
                         3
-                                > Math.abs(judoka1.getWeight() - judoka2.getWeight()))
+                                < Math.abs(judoka1.getWeight() - judoka2.getWeight()))
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(WEIGHT_CONSTRAINT_LABEL);
 
@@ -114,7 +115,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                 .forEach(Pool.class)
                 .filter(pool -> pool.getJudokaList().size() == 4)
                 .reward(HardSoftScore.ONE_SOFT)
-                .asConstraint("Preferred pool size is 4");
+                .asConstraint(PREFERED_POOL_SIZE_LABEL);
     }
 
     /**
