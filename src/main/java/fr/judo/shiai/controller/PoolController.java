@@ -3,7 +3,7 @@ package fr.judo.shiai.controller;
 import fr.judo.shiai.domain.Judoka;
 import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
-import fr.judo.shiai.persistence.JudokaRepository;
+import fr.judo.shiai.repository.JudokaRepository;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,8 @@ public class PoolController {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         try {
             // Retrieve judokas
-            List<Judoka> judokas = judokaRepository.getAllEligibleJudokas(true);
+            List<Judoka> judokas = judokaRepository.findAllPresentAndWeightedJudoka();
+            log.info("Judokas available : " + judokas.size());
             // Declare pools
             List<Pool> pools = computePoolsList(judokas.size());
             // Declare problem/solution container

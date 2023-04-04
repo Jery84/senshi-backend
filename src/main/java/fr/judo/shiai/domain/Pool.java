@@ -18,8 +18,6 @@ public class Pool {
 
     private String name;
 
-    private Category category;
-
     @InverseRelationShadowVariable(sourceVariableName = "pool")
     private List<Judoka> judokaList = new ArrayList<>();
 
