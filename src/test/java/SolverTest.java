@@ -13,11 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-
 @SpringBootTest(classes = ShiaiApp.class)
 class SolverTest {
     @Autowired
@@ -51,8 +51,10 @@ class SolverTest {
     }
 
     public static void printSolution(PoolDispatchingSolution poolDispatchingSolution) {
+        int judokasCount = 0;
         for (Pool pool : poolDispatchingSolution.getPoolList()) {
-            log.info("Pool " + pool.getId());
+            log.info("Pool " + pool.getId() + " is valid " + isPoolValid(pool));
+            judokasCount = judokasCount + pool.getJudokaList().size();
             for (Judoka judoka : pool.getJudokaList()) {
                 log.info("--> " + judoka.getPool().getId() + " "
                         + judoka.getGender() + " "
@@ -62,10 +64,19 @@ class SolverTest {
                         + judoka.getFirstName() + " " + judoka.getLastName());
             }
         }
+        log.info("Judokas count : " + judokasCount + " / " + poolDispatchingSolution.getJudokaList().size());
+    }
+
+    private static boolean isPoolValid(final Pool pool) {
+
+        return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
+                && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
+                - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
     }
 
     @Test
     void firstTest() {
         printSolution(senshiSolver.solve(generateDemoData()));
+
     }
 }
