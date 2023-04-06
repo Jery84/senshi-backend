@@ -19,9 +19,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @SpringBootTest(classes = ShiaiApp.class)
-class SolverTest {
-    @Autowired
-    private SenshiSolver senshiSolver;
+public class SolverTest {
+
 
     public static PoolDispatchingSolution generateDemoData() {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
@@ -50,10 +49,12 @@ class SolverTest {
         return poolDispatchingSolution;
     }
 
-    public static void printSolution(PoolDispatchingSolution poolDispatchingSolution) {
+    public static boolean printSolution(PoolDispatchingSolution poolDispatchingSolution) {
         int judokasCount = 0;
+        boolean res = true;
         for (Pool pool : poolDispatchingSolution.getPoolList()) {
             log.info("Pool " + pool.getId() + " is valid " + isPoolValid(pool));
+            res = res && isPoolValid(pool);
             judokasCount = judokasCount + pool.getJudokaList().size();
             for (Judoka judoka : pool.getJudokaList()) {
                 log.info("--> " + judoka.getPool().getId() + " "
@@ -65,6 +66,7 @@ class SolverTest {
             }
         }
         log.info("Judokas count : " + judokasCount + " / " + poolDispatchingSolution.getJudokaList().size());
+        return res;
     }
 
     private static boolean isPoolValid(final Pool pool) {
@@ -76,7 +78,7 @@ class SolverTest {
 
     @Test
     void firstTest() {
+        SenshiSolver senshiSolver= new SenshiSolver();
         printSolution(senshiSolver.solve(generateDemoData()));
-
     }
 }
