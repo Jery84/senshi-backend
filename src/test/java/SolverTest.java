@@ -13,15 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-
 @SpringBootTest(classes = ShiaiApp.class)
-class SolverTest {
-    @Autowired
-    private SenshiSolver senshiSolver;
+public class SolverTest {
+
 
     public static PoolDispatchingSolution generateDemoData() {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
@@ -50,9 +49,13 @@ class SolverTest {
         return poolDispatchingSolution;
     }
 
-    public static void printSolution(PoolDispatchingSolution poolDispatchingSolution) {
+    public static boolean printSolution(PoolDispatchingSolution poolDispatchingSolution) {
+        int judokasCount = 0;
+        boolean res = true;
         for (Pool pool : poolDispatchingSolution.getPoolList()) {
-            log.info("Pool " + pool.getId());
+            log.info("Pool " + pool.getId() + " is valid " + isPoolValid(pool));
+            res = res && isPoolValid(pool);
+            judokasCount = judokasCount + pool.getJudokaList().size();
             for (Judoka judoka : pool.getJudokaList()) {
                 log.info("--> " + judoka.getPool().getId() + " "
                         + judoka.getGender() + " "
@@ -62,10 +65,20 @@ class SolverTest {
                         + judoka.getFirstName() + " " + judoka.getLastName());
             }
         }
+        log.info("Judokas count : " + judokasCount + " / " + poolDispatchingSolution.getJudokaList().size());
+        return res;
+    }
+
+    private static boolean isPoolValid(final Pool pool) {
+
+        return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
+                && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
+                - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
     }
 
     @Test
     void firstTest() {
+        SenshiSolver senshiSolver= new SenshiSolver();
         printSolution(senshiSolver.solve(generateDemoData()));
     }
 }
