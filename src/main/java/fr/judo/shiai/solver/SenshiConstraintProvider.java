@@ -10,7 +10,7 @@ import org.optaplanner.core.api.score.stream.Joiners;
 
 public class SenshiConstraintProvider implements ConstraintProvider {
 
-    private static final int MAXPREFERED_POOL_SIZE = 4;
+    public static final int MAX_PREFERED_POOL_SIZE = 4;
 
     private static final int MIN_POOL_SIZE = 4;
 
@@ -62,7 +62,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     Constraint maxPoolSizeConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Pool.class)
-                .filter(pool -> pool.getJudokaList().size() > MAXPREFERED_POOL_SIZE)
+                .filter(pool -> pool.getJudokaList().size() > MAX_PREFERED_POOL_SIZE)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MAX_4_CONFLICT_CONSTRAINT_LABEL);
     }
@@ -118,7 +118,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     Constraint preferedPoolSize(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Pool.class)
-                .filter(pool -> pool.getJudokaList().size() == MAXPREFERED_POOL_SIZE)
+                .filter(pool -> pool.getJudokaList().size() == MAX_PREFERED_POOL_SIZE)
                 .reward(HardSoftScore.ONE_SOFT)
                 .asConstraint(PREFERED_POOL_SIZE_LABEL);
     }

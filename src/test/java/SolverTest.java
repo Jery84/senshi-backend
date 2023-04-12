@@ -4,12 +4,16 @@ import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
 import fr.judo.shiai.repository.JudokaRepository;
 import fr.judo.shiai.service.LoaderService;
+import fr.judo.shiai.solver.SenshiConstraintProvider;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,6 +21,7 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest(classes = ShiaiApp.class)
+@ExtendWith(SpringExtension.class)
 public class SolverTest {
     @Autowired
     LoaderService loaderService;
@@ -24,13 +29,23 @@ public class SolverTest {
     @Autowired
     JudokaRepository judokaRepository;
 
-    private static boolean isPoolValid(final Pool pool) {
+    boolean isDBloaded = false;
 
+
+    /**
+     * @param pool
+     * @return true is the pool complies to hard constraints (pool's size and judoka's wuights)
+     */
+    private static boolean isPoolValid(final Pool pool) {
         return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
                 && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
                 - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
     }
 
+    /**
+     * @param poolDispatchingSolution
+     * @return true if all pools are valid
+     */
     public boolean printSolution(PoolDispatchingSolution poolDispatchingSolution) {
         int judokasCount = 0;
         boolean res = true;
@@ -51,39 +66,48 @@ public class SolverTest {
         return res;
     }
 
-    public PoolDispatchingSolution generateDemoData() {
-        PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
-        List<Judoka> judokas = judokaRepository.findBenjamins();
-        /*try {
-            CsvParser.separator(';')
-                    .mapWith(
-                            CsvMapperFactory
-                                    .newInstance()
-                                    .defaultDateFormat("dd/MM/yyyy")
-                                    .newMapper(Judoka.class))
-                    .stream(ResourceFactory.newClassPathResource("Poussins.csv").getReader())
-                    .collect(Collectors.toCollection(() -> judokas));
-            log.info("" + judokas.size());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
 
-
+    /**
+     * @param judokas
+     * @return
+     */
+    public List<Pool> getPoolList(final List<Judoka> judokas) {
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < judokas.size() / 4 + (judokas.size() % 4 > 0 ? 1 : 0); i++) {
+        for (int i = 0; i < judokas.size() / SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE
+                + (judokas.size() % SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE > 0 ? 1 : 0); i++) {
             Pool pool = new Pool();
             pool.setId(Long.valueOf(i));
             poolList.add(pool);
         }
-        poolDispatchingSolution.setPoolList(poolList);
-        poolDispatchingSolution.setJudokaList(judokas);
-        return poolDispatchingSolution;
+        return poolList;
+    }
+
+    /**
+     *
+     * @param judokaList
+     * @return true if the current problem is solved properly
+     */
+    public boolean makeTest(final List<Judoka> judokaList) {
+        //TODO fix this code with @BeforeAll setup method with fix to null loaderService (cannot be static)
+        if(!isDBloaded) {
+            loaderService.load();
+        }
+
+        SenshiSolver senshiSolver = new SenshiSolver();
+        PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
+        poolDispatchingSolution.setJudokaList(judokaList);
+        poolDispatchingSolution.setPoolList(getPoolList(judokaList));
+        return printSolution(senshiSolver.solve(poolDispatchingSolution));
+    }
+
+
+    @Test
+    void testBejamins() {
+        Assertions.assertEquals(makeTest(judokaRepository.findBenjamins()), true);
     }
 
     @Test
-    void firstTest() {
-        loaderService.load();
-        SenshiSolver senshiSolver = new SenshiSolver();
-        Assertions.assertEquals(printSolution(senshiSolver.solve(generateDemoData())), true);
+    void testBejamines() {
+        Assertions.assertEquals(makeTest(judokaRepository.findBenjamines()), true);
     }
 }
