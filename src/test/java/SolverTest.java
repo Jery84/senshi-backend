@@ -8,7 +8,6 @@ import fr.judo.shiai.solver.SenshiConstraintProvider;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class SolverTest {
 
     /**
      * @param pool
-     * @return true is the pool complies to hard constraints (pool's size and judoka's wuights)
+     * @return true is the pool complies to hard constraints (pool's size and judoka's weights)
      */
     private static boolean isPoolValid(final Pool pool) {
         return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
@@ -83,13 +82,12 @@ public class SolverTest {
     }
 
     /**
-     *
      * @param judokaList
      * @return true if the current problem is solved properly
      */
     public boolean makeTest(final List<Judoka> judokaList) {
         //TODO fix this code with @BeforeAll setup method with fix to null loaderService (cannot be static)
-        if(!isDBloaded) {
+        if (!isDBloaded) {
             loaderService.load();
         }
 
@@ -100,6 +98,11 @@ public class SolverTest {
         return printSolution(senshiSolver.solve(poolDispatchingSolution));
     }
 
+
+    @Test
+    void testPoussins() {
+        Assertions.assertEquals(makeTest(judokaRepository.findPoussins()), true);
+    }
 
     @Test
     void testBejamins() {
