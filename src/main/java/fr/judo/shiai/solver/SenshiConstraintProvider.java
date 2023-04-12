@@ -131,7 +131,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
         return constraintFactory
                 .forEachUniquePair(Judoka.class,
                         Joiners.equal(Judoka::getPool))
-                .filter((judoka1, judoka2) -> !judoka1.getClub().equals(judoka2.getClub()))
+                .filter((judoka1, judoka2) -> !judoka1.getClub().getId().equals(judoka2.getClub().getId()))
                 .reward(HardSoftScore.ONE_SOFT)
                 .asConstraint(CLUB_VARIETY_CONSTRAINT_LABEL);
     }

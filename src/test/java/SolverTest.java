@@ -33,9 +33,9 @@ public class SolverTest {
             for (Judoka judoka : pool.getJudokaList()) {
                 log.info("--> " + judoka.getPool().getId() + " "
                         + judoka.getGender() + " "
-                        + judoka.getCategory() + " "
+                        + judoka.getCategory().getName() + " "
                         + judoka.getWeight() + " "
-                        + judoka.getClub() + " "
+                        + judoka.getClub().getName() + " "
                         + judoka.getFirstName() + " " + judoka.getLastName());
             }
         }
