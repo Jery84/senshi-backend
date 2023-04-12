@@ -6,6 +6,7 @@ import fr.judo.shiai.repository.JudokaRepository;
 import fr.judo.shiai.service.LoaderService;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,14 @@ public class SolverTest {
     @Autowired
     JudokaRepository judokaRepository;
 
-    public static boolean printSolution(PoolDispatchingSolution poolDispatchingSolution) {
+    private static boolean isPoolValid(final Pool pool) {
+
+        return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
+                && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
+                - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
+    }
+
+    public boolean printSolution(PoolDispatchingSolution poolDispatchingSolution) {
         int judokasCount = 0;
         boolean res = true;
         for (Pool pool : poolDispatchingSolution.getPoolList()) {
@@ -41,13 +49,6 @@ public class SolverTest {
         }
         log.info("Judokas count : " + judokasCount + " / " + poolDispatchingSolution.getJudokaList().size());
         return res;
-    }
-
-    private static boolean isPoolValid(final Pool pool) {
-
-        return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
-                && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
-                - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
     }
 
     public PoolDispatchingSolution generateDemoData() {
@@ -69,7 +70,7 @@ public class SolverTest {
 
 
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < judokas.size() / 4 + 1; i++) {
+        for (int i = 0; i < judokas.size() / 4 + (judokas.size() % 4 > 0 ? 1 : 0); i++) {
             Pool pool = new Pool();
             pool.setId(Long.valueOf(i));
             poolList.add(pool);
@@ -83,6 +84,6 @@ public class SolverTest {
     void firstTest() {
         loaderService.load();
         SenshiSolver senshiSolver = new SenshiSolver();
-        printSolution(senshiSolver.solve(generateDemoData()));
+        Assertions.assertEquals(printSolution(senshiSolver.solve(generateDemoData())), true);
     }
 }
