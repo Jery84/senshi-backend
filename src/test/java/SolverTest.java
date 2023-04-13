@@ -89,6 +89,7 @@ public class SolverTest {
         //TODO fix this code with @BeforeAll setup method with fix to null loaderService (cannot be static)
         if (!isDBloaded) {
             loaderService.load();
+            this.isDBloaded = true;
         }
 
         SenshiSolver senshiSolver = new SenshiSolver();
