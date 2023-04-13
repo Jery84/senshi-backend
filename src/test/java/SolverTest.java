@@ -3,7 +3,6 @@ import fr.judo.shiai.domain.Judoka;
 import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
 import fr.judo.shiai.repository.JudokaRepository;
-import fr.judo.shiai.service.LoaderService;
 import fr.judo.shiai.solver.SenshiConstraintProvider;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +21,9 @@ import java.util.List;
 @SpringBootTest(classes = ShiaiApp.class)
 @ExtendWith(SpringExtension.class)
 public class SolverTest {
-    @Autowired
-    LoaderService loaderService;
 
     @Autowired
     JudokaRepository judokaRepository;
-
-    boolean isDBloaded = false;
-
 
     /**
      * @param pool
@@ -86,12 +80,6 @@ public class SolverTest {
      * @return true if the current problem is solved properly
      */
     public boolean makeTest(final List<Judoka> judokaList) {
-        //TODO fix this code with @BeforeAll setup method with fix to null loaderService (cannot be static)
-        if (!isDBloaded) {
-            loaderService.load();
-            this.isDBloaded = true;
-        }
-
         SenshiSolver senshiSolver = new SenshiSolver();
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         poolDispatchingSolution.setJudokaList(judokaList);
