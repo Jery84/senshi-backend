@@ -2,70 +2,104 @@ import fr.judo.shiai.ShiaiApp;
 import fr.judo.shiai.domain.Judoka;
 import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
+import fr.judo.shiai.repository.JudokaRepository;
+import fr.judo.shiai.solver.SenshiConstraintProvider;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.kie.internal.io.ResourceFactory;
-import org.simpleflatmapper.csv.CsvMapperFactory;
-import org.simpleflatmapper.csv.CsvParser;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
-
 @SpringBootTest(classes = ShiaiApp.class)
-class SolverTest {
-    @Autowired
-    private SenshiSolver senshiSolver;
+@ExtendWith(SpringExtension.class)
+public class SolverTest {
 
-    public static PoolDispatchingSolution generateDemoData() {
-        PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
-        List<Judoka> judokas = new ArrayList<>();
-        try {
-            CsvParser.separator(';')
-                    .mapWith(
-                            CsvMapperFactory
-                                    .newInstance()
-                                    .defaultDateFormat("dd/MM/yyyy")
-                                    .newMapper(Judoka.class))
-                    .stream(ResourceFactory.newClassPathResource("Poussins.csv").getReader())
-                    .collect(Collectors.toCollection(() -> judokas));
-            log.info("" + judokas.size());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    @Autowired
+    JudokaRepository judokaRepository;
+
+    /**
+     * @param pool
+     * @return true is the pool complies to hard constraints (pool's size and judoka's weights)
+     */
+    private static boolean isPoolValid(final Pool pool) {
+        return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
+                && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
+                - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
+    }
+
+    /**
+     * @param poolDispatchingSolution
+     * @return true if all pools are valid
+     */
+    public boolean printSolution(PoolDispatchingSolution poolDispatchingSolution) {
+        int judokasCount = 0;
+        boolean res = true;
+        for (Pool pool : poolDispatchingSolution.getPoolList()) {
+            log.info("Pool " + pool.getId() + " is valid " + isPoolValid(pool));
+            res = res && isPoolValid(pool);
+            judokasCount = judokasCount + pool.getJudokaList().size();
+            for (Judoka judoka : pool.getJudokaList()) {
+                log.info("--> " + judoka.getPool().getId() + " "
+                        + judoka.getGender() + " "
+                        + judoka.getCategory().getName() + " "
+                        + judoka.getWeight() + " "
+                        + judoka.getClub().getName() + " "
+                        + judoka.getFirstName() + " " + judoka.getLastName());
+            }
         }
+        log.info("Judokas count : " + judokasCount + " / " + poolDispatchingSolution.getJudokaList().size());
+        return res;
+    }
+
+
+    /**
+     * @param judokas
+     * @return
+     */
+    public List<Pool> getPoolList(final List<Judoka> judokas) {
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < judokas.size() / 4 + 1; i++) {
+        for (int i = 0; i < judokas.size() / SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE
+                + (judokas.size() % SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE > 0 ? 1 : 0); i++) {
             Pool pool = new Pool();
             pool.setId(Long.valueOf(i));
             poolList.add(pool);
         }
-        poolDispatchingSolution.setPoolList(poolList);
-        poolDispatchingSolution.setJudokaList(judokas);
-        return poolDispatchingSolution;
+        return poolList;
     }
 
-    public static void printSolution(PoolDispatchingSolution poolDispatchingSolution) {
-        for (Pool pool : poolDispatchingSolution.getPoolList()) {
-            log.info("Pool " + pool.getId());
-            for (Judoka judoka : pool.getJudokaList()) {
-                log.info("--> " + judoka.getPool().getId() + " "
-                        + judoka.getGender() + " "
-                        + judoka.getCategory() + " "
-                        + judoka.getWeight() + " "
-                        + judoka.getClub() + " "
-                        + judoka.getFirstName() + " " + judoka.getLastName());
-            }
-        }
+    /**
+     * @param judokaList
+     * @return true if the current problem is solved properly
+     */
+    public boolean makeTest(final List<Judoka> judokaList) {
+        SenshiSolver senshiSolver = new SenshiSolver();
+        PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
+        poolDispatchingSolution.setJudokaList(judokaList);
+        poolDispatchingSolution.setPoolList(getPoolList(judokaList));
+        return printSolution(senshiSolver.solve(poolDispatchingSolution));
+    }
+
+
+    @Test
+    void testPoussins() {
+        Assertions.assertEquals(makeTest(judokaRepository.findPoussins()), true);
     }
 
     @Test
-    void firstTest() {
-        printSolution(senshiSolver.solve(generateDemoData()));
+    void testBejamins() {
+        Assertions.assertEquals(makeTest(judokaRepository.findBenjamins()), true);
+    }
+
+    @Test
+    void testBejamines() {
+        Assertions.assertEquals(makeTest(judokaRepository.findBenjamines()), true);
     }
 }
