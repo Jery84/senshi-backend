@@ -10,6 +10,7 @@ import org.optaplanner.core.config.solver.SolverConfig;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Comparator;
 
 @Slf4j
 @Component
@@ -34,6 +35,14 @@ public class SenshiSolver {
         // Solve the problem
         Solver<PoolDispatchingSolution> solver = solverFactory.buildSolver();
         PoolDispatchingSolution solution = solver.solve(problem);
+        solution.getPoolList().stream().forEach(pool -> {
+            pool.setName(pool.getJudokaList().get(0) != null ? "#" + pool.getId() + " "
+                    + pool.getJudokaList().get(0).getCategory().getName()
+                    + " " + pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
+                    + " - " + pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
+                    : "Vide"
+            );
+        });
         return solution;
     }
 

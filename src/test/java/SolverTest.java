@@ -43,7 +43,7 @@ public class SolverTest {
         int judokasCount = 0;
         boolean res = true;
         for (Pool pool : poolDispatchingSolution.getPoolList()) {
-            log.info("Pool " + pool.getId() + " is valid " + isPoolValid(pool));
+            log.info("Pool " + pool.getName() + " is valid " + isPoolValid(pool));
             res = res && isPoolValid(pool);
             judokasCount = judokasCount + pool.getJudokaList().size();
             for (Judoka judoka : pool.getJudokaList()) {
