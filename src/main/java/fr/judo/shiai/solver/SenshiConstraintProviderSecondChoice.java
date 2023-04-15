@@ -10,9 +10,9 @@ import org.optaplanner.core.api.score.stream.Joiners;
 
 public class SenshiConstraintProviderSecondChoice implements ConstraintProvider {
 
-    public static final int MAX_PREFERED_POOL_SIZE = 4;
+    public static final int MAX_PREFERED_POOL_SIZE = 3;
 
-    private static final int MIN_POOL_SIZE = 4;
+    private static final int MIN_POOL_SIZE = 2;
 
     private static final String WEIGHT_CONSTRAINT_LABEL = "weight range";
     private static final String CLUB_VARIETY_CONSTRAINT_LABEL = "club variety";
@@ -24,21 +24,21 @@ public class SenshiConstraintProviderSecondChoice implements ConstraintProvider 
     private static final String MIN_2_CONFLICT_CONSTRAINT_LABEL = "min pool size conflict";
 
     private static final String MAX_4_CONFLICT_CONSTRAINT_LABEL = "max pool size conflict";
-    private static final String PREFERED_POOL_SIZE_LABEL = "Preferred pool size is 4";
-    private static final int MAX_WEIGHT_DIFFERENCE = 3;
+    private static final String PREFERED_POOL_SIZE_LABEL = "Preferred pool size is 3";
+    private static final int MAX_WEIGHT_DIFFERENCE = 5;
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
                 // genderConflict(constraintFactory),
-                weightRangeConflict(constraintFactory),
-                //categoryConflict(constraintFactory),
+              //  weightRangeConflict(constraintFactory),
+              //  categoryConflict(constraintFactory),
                 minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
-                clubVariety(constraintFactory),
-                preferedPoolSize(constraintFactory)
+              //  clubVariety(constraintFactory),
+               // preferedPoolSize(constraintFactory)
 
         };
     }
@@ -108,5 +108,16 @@ public class SenshiConstraintProviderSecondChoice implements ConstraintProvider 
                 .reward(HardSoftScore.ONE_SOFT)
                 .asConstraint(CLUB_VARIETY_CONSTRAINT_LABEL);
     }
-
+    /**
+     * @param constraintFactory manage all constraints
+     * @return Two judokas  must be in the same category hard constraint
+     */
+    Constraint categoryConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Judoka.class,
+                        Joiners.equal(Judoka::getPool))
+                .filter((judoka1, judoka2) -> !judoka1.getCategory().equals(judoka2.getCategory()))
+                .penalize(HardSoftScore.ONE_HARD)
+                .asConstraint(CATEGORY_CONFLICT_CONSTRAINT_LABEL);
+    }
 }

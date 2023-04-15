@@ -4,7 +4,9 @@ import fr.judo.shiai.domain.Pool;
 import fr.judo.shiai.domain.PoolDispatchingSolution;
 import fr.judo.shiai.repository.JudokaRepository;
 import fr.judo.shiai.solver.SenshiConstraintProvider;
+import fr.judo.shiai.solver.SenshiConstraintProviderSecondChoice;
 import fr.judo.shiai.solver.SenshiSolver;
+import fr.judo.shiai.solver.SenshiSolverSecondChoice;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -64,10 +66,10 @@ public class SolverTest {
      * @param judokas
      * @return
      */
-    public List<Pool> getPoolList(final List<Judoka> judokas) {
+    public List<Pool> getPoolList(final List<Judoka> judokas, final int size) {
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < judokas.size() / SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE
-                + (judokas.size() % SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE > 0 ? 1 : 0); i++) {
+        for (int i = 0; i < judokas.size() / size
+                + (judokas.size() % size > 0 ? 1 : 0); i++) {
             Pool pool = new Pool();
             pool.setId(Long.valueOf(i));
             poolList.add(pool);
@@ -83,7 +85,7 @@ public class SolverTest {
         SenshiSolver senshiSolver = new SenshiSolver();
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         poolDispatchingSolution.setJudokaList(judokaList);
-        poolDispatchingSolution.setPoolList(getPoolList(judokaList));
+        poolDispatchingSolution.setPoolList(getPoolList(judokaList, SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE));
         return printSolution(senshiSolver.solve(poolDispatchingSolution));
     }
 
@@ -98,8 +100,26 @@ public class SolverTest {
         Assertions.assertEquals(makeTest(judokaRepository.findBenjamins()), true);
     }
 
+
+    @Test
+    void testBejamins2nd() {
+        Assertions.assertEquals(makeSecondTest(judokaRepository.findBenjamins()), true);
+    }
+
     @Test
     void testBejamines() {
         Assertions.assertEquals(makeTest(judokaRepository.findBenjamines()), true);
+    }
+
+    /**
+     * @param judokaList
+     * @return true if the current problem is solved properly
+     */
+    public boolean makeSecondTest(final List<Judoka> judokaList) {
+        SenshiSolverSecondChoice senshiSolver = new SenshiSolverSecondChoice();
+        PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
+        poolDispatchingSolution.setJudokaList(judokaList);
+        poolDispatchingSolution.setPoolList(getPoolList(judokaList, SenshiConstraintProviderSecondChoice.MAX_PREFERED_POOL_SIZE));
+        return printSolution(senshiSolver.solve(poolDispatchingSolution));
     }
 }

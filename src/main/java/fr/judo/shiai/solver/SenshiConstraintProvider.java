@@ -12,7 +12,7 @@ public class SenshiConstraintProvider implements ConstraintProvider {
 
     public static final int MAX_PREFERED_POOL_SIZE = 4;
 
-    private static final int MIN_POOL_SIZE = 4;
+    private static final int MIN_POOL_SIZE = 2;
 
     private static final String WEIGHT_CONSTRAINT_LABEL = "weight range";
     private static final String CLUB_VARIETY_CONSTRAINT_LABEL = "club variety";
@@ -31,9 +31,9 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
-                // genderConflict(constraintFactory),
+                 genderConflict(constraintFactory),
                 weightRangeConflict(constraintFactory),
-                //categoryConflict(constraintFactory),
+                categoryConflict(constraintFactory),
                 minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
