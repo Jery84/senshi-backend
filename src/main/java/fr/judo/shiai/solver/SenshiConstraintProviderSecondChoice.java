@@ -8,7 +8,7 @@ import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 import org.optaplanner.core.api.score.stream.Joiners;
 
-public class SenshiConstraintProvider implements ConstraintProvider {
+public class SenshiConstraintProviderSecondChoice implements ConstraintProvider {
 
     public static final int MAX_PREFERED_POOL_SIZE = 4;
 
@@ -65,33 +65,6 @@ public class SenshiConstraintProvider implements ConstraintProvider {
                 .filter(pool -> pool.getJudokaList().size() > MAX_PREFERED_POOL_SIZE)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MAX_4_CONFLICT_CONSTRAINT_LABEL);
-    }
-
-
-    /**
-     * @param constraintFactory manage all constraints
-     * @return Two judokas  must have same gender hard constraint
-     */
-    Constraint genderConflict(ConstraintFactory constraintFactory) {
-        return constraintFactory
-                .forEachUniquePair(Judoka.class,
-                        Joiners.equal(Judoka::getPool))
-                .filter((judoka1, judoka2) -> !judoka1.getGender().equals(judoka2.getGender()))
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint(GENDER_CONFLICT_CONSTRAINT_LABEL);
-    }
-
-    /**
-     * @param constraintFactory manage all constraints
-     * @return Two judokas  must be in the same category hard constraint
-     */
-    Constraint categoryConflict(ConstraintFactory constraintFactory) {
-        return constraintFactory
-                .forEachUniquePair(Judoka.class,
-                        Joiners.equal(Judoka::getPool))
-                .filter((judoka1, judoka2) -> !judoka1.getCategory().equals(judoka2.getCategory()))
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint(CATEGORY_CONFLICT_CONSTRAINT_LABEL);
     }
 
 
