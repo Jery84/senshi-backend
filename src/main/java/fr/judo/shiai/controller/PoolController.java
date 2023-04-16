@@ -117,7 +117,10 @@ public class PoolController {
         updated.setName(pool.getTitle());
         updated.getJudokaList().clear();
         pool.getJudokas().forEach(judokaDto -> {
-            updated.getJudokaList().add(judokaRepository.findById(judokaDto.getId()).get());
+            Judoka judoka = judokaRepository.findById(judokaDto.getId()).get();
+            judoka.setPool(updated);
+            judokaRepository.save(judoka);
+            updated.getJudokaList().add(judoka);
         });
         poolRepository.save(updated);
 

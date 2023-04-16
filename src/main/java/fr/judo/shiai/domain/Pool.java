@@ -25,7 +25,7 @@ public class Pool {
 
     @InverseRelationShadowVariable(sourceVariableName = "pool")
     @OneToMany(
-            cascade = CascadeType.ALL
+            cascade = CascadeType.DETACH
     )
     private List<Judoka> judokaList = new ArrayList<>();
 
