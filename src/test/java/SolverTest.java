@@ -30,7 +30,7 @@ public class SolverTest {
      * @return true is the pool complies to hard constraints (pool's size and judoka's weights)
      */
     private static boolean isPoolValid(final Pool pool) {
-        return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
+        return (pool.getJudokaList().size() >= 2 && pool.getJudokaList().size() <= 5)
                 && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
                 - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
     }
@@ -94,12 +94,12 @@ public class SolverTest {
     }
 
     @Test
-    void testBejamins() {
+    void testBenjamins() {
         Assertions.assertEquals(makeTest(judokaRepository.findBenjamins()), true);
     }
 
     @Test
-    void testBejamines() {
+    void testBenjamines() {
         Assertions.assertEquals(makeTest(judokaRepository.findBenjamines()), true);
     }
 }
