@@ -5,12 +5,14 @@ import fr.judo.shiai.dto.PoolDto;
 import fr.judo.shiai.mappers.PoolMapper;
 import fr.judo.shiai.repository.CategoryRepository;
 import fr.judo.shiai.repository.JudokaRepository;
+import fr.judo.shiai.repository.PoolRepository;
 import fr.judo.shiai.solver.SenshiSolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,17 +30,18 @@ public class PoolController {
     private static final int MAX_JUDOKAS_PER_POOL = 4;
 
     @Autowired
+    private PoolRepository poolRepository;
+    @Autowired
     private JudokaRepository judokaRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private SenshiSolver senshiSolver;
-
-    @Autowired
     private PoolMapper poolMapper;
 
+    @Autowired
+    private SenshiSolver senshiSolver;
     @PostMapping("/pools")
     public Iterable<PoolDto> computeAllPools() {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
@@ -55,7 +58,12 @@ public class PoolController {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        return poolMapper.toDto(poolDispatchingSolution.getPoolList());
+
+        poolRepository.deleteAll();
+        poolRepository.saveAll(poolDispatchingSolution.getPoolList());
+
+        // ensure that we return the correct ids
+        return poolMapper.toDto(poolRepository.findAll());
     }
 
     @PostMapping("/pools-fallback")
@@ -88,7 +96,32 @@ public class PoolController {
             pools.addAll(buildPools(girls, poolIndexCounter));
         });
 
-        return poolMapper.toDto(pools);
+        poolRepository.deleteAll();
+        poolRepository.saveAll(pools);
+
+        // ensure that we return the correct ids
+        return poolMapper.toDto(poolRepository.findAll());
+    }
+
+    @GetMapping("pool")
+    public Iterable<Pool> findAll() {
+        return poolRepository.findAll();
+    }
+
+    @PutMapping(path = "pool/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PoolDto> update(@PathVariable Long id, @RequestBody PoolDto pool) {
+
+        Pool updated = poolRepository.findById(id).get();
+        updated.setName(pool.getTitle());
+        updated.getJudokaList().clear();
+        pool.getJudokas().forEach(judokaDto -> {
+            updated.getJudokaList().add(judokaRepository.findById(judokaDto.getId()).get());
+        });
+        poolRepository.save(updated);
+
+        return new ResponseEntity<>(poolMapper.toDto(updated), HttpStatus.ACCEPTED);
     }
 
     private Collection<? extends Pool> buildPools(Collection<Judoka> judokas, AtomicLong poolIndexCounter) {
