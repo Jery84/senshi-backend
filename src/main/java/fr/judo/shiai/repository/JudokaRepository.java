@@ -1,6 +1,7 @@
 package fr.judo.shiai.repository;
 
 import fr.judo.shiai.domain.Judoka;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -21,4 +22,8 @@ public interface JudokaRepository extends CrudRepository<Judoka, Integer> {
 
     @Query("SELECT j FROM Judoka j WHERE j.present =  true AND j.category.name = 'BENJAMIN' AND j.gender = 'FEMALE' and j.weight is not null and j.weight > 0")
     List<Judoka> findBenjamines();
+
+    @Modifying
+    @Query("update Judoka j set j.present = false")
+    void resetPresence();
 }

@@ -1,9 +1,11 @@
 package fr.judo.shiai.controller;
 
+import fr.judo.shiai.controller.request.ResetRequest;
 import fr.judo.shiai.domain.Judoka;
 import fr.judo.shiai.dto.JudokaDto;
 import fr.judo.shiai.mappers.JudokaMapper;
 import fr.judo.shiai.repository.JudokaRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,6 +58,15 @@ public class JudokaController {
         } catch (Exception e) {
             return "KO";
         }
+    }
+
+    @Transactional
+    @PostMapping(path = "judoka/reset",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Iterable<JudokaDto> resetPresence(@RequestBody ResetRequest resetRequest) {
+        judokaRepository.resetPresence();
+        return judokaMapper.toDto(judokaRepository.findAll());
     }
 
 }
