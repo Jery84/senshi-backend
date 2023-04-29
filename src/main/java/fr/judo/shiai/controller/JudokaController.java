@@ -72,7 +72,11 @@ public class JudokaController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<JudokaDto> resetPresence(@RequestBody ResetRequest resetRequest) {
-        judokaRepository.resetPresence();
+        if(resetRequest.getCategoryName().isEmpty()) {
+            judokaRepository.resetPresence();
+        } else {
+            judokaRepository.resetPresence(resetRequest.getCategoryName());
+        }
         return judokaMapper.toDto(judokaRepository.findAll());
     }
 
