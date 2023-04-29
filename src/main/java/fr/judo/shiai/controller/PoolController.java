@@ -60,7 +60,8 @@ public class PoolController {
         }
 
         poolRepository.deleteAll();
-        poolRepository.saveAll(poolDispatchingSolution.getPoolList());
+        poolRepository.saveAll(poolDispatchingSolution.getPoolList().stream()
+                .filter(pool -> !pool.getJudokaList().isEmpty()).collect(Collectors.toList()));
 
         // ensure that we return the correct ids
         return poolMapper.toDto(poolRepository.findAll());
@@ -70,7 +71,6 @@ public class PoolController {
     public Iterable<PoolDto> computeAllPoolsFallback() {
 
         List<Pool> pools = new ArrayList<>();
-        final AtomicLong poolIndexCounter = new AtomicLong();
 
         // Retrieve judokas
         List<Judoka> judokas = judokaRepository.findAllPresentAndWeightedJudoka();
@@ -92,8 +92,8 @@ public class PoolController {
                     .sorted(Comparator.comparing(Judoka::getWeight))
                     .toList();
 
-            pools.addAll(buildPools(boys, poolIndexCounter));
-            pools.addAll(buildPools(girls, poolIndexCounter));
+            pools.addAll(buildPools(boys));
+            pools.addAll(buildPools(girls));
         });
 
         poolRepository.deleteAll();
@@ -104,8 +104,8 @@ public class PoolController {
     }
 
     @GetMapping("pool")
-    public Iterable<Pool> findAll() {
-        return poolRepository.findAll();
+    public Iterable<PoolDto> findAll() {
+        return poolMapper.toDto(poolRepository.findAll());
     }
 
     @PutMapping(path = "pool/{id}",
@@ -127,7 +127,7 @@ public class PoolController {
         return new ResponseEntity<>(poolMapper.toDto(updated), HttpStatus.ACCEPTED);
     }
 
-    private Collection<? extends Pool> buildPools(Collection<Judoka> judokas, AtomicLong poolIndexCounter) {
+    private Collection<? extends Pool> buildPools(Collection<Judoka> judokas) {
         final AtomicInteger counter = new AtomicInteger();
         return new ArrayList<>(
                 judokas.stream()
@@ -135,7 +135,6 @@ public class PoolController {
                         .values())
                 .stream().map(judokasSubSet -> {
                     Pool pool = new Pool();
-                    pool.setId(poolIndexCounter.getAndIncrement());
                     pool.setJudokaList(judokasSubSet);
                     return pool;
                 }).toList();
@@ -149,7 +148,7 @@ public class PoolController {
         List<Pool> poolList = new ArrayList<>();
         for (int i = 0; i < judokasCount / MAX_JUDOKAS_PER_POOL + 1; i++) {
             Pool pool = new Pool();
-            pool.setId(Long.valueOf(i));
+            pool.setId(Long.valueOf(i + 1));
             poolList.add(pool);
         }
         return poolList;
