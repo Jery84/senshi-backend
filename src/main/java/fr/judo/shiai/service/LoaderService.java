@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -176,7 +177,7 @@ public class LoaderService {
 
                     judokas.add(Judoka.builder()
                             .gender(ligne[4].trim().equals("Masculin") ? Gender.MALE : Gender.FEMALE)
-                            .firstName(ligne[3])
+                            .firstName(formatFirstName(ligne[3]))
                             .lastName(ligne[2])
                             .club(club)
                             .birthDate(birthDate)
@@ -196,5 +197,12 @@ public class LoaderService {
                 log.error("Error while reading/processing the DAT file", e);
             }
         }
+    }
+
+    private String formatFirstName(String firstName) {
+        return Arrays.stream(firstName.split(" "))
+                .map(s -> s.toLowerCase())
+                .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
+                .collect(Collectors.joining(" "));
     }
 }
