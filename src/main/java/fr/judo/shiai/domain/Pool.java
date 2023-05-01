@@ -1,24 +1,32 @@
 package fr.judo.shiai.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalDouble;
-
+@Entity
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @PlanningEntity
 public class Pool {
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
     @InverseRelationShadowVariable(sourceVariableName = "pool")
+    @OneToMany(
+            cascade = CascadeType.DETACH
+    )
     private List<Judoka> judokaList = new ArrayList<>();
 
     public double getWeightMin() {
