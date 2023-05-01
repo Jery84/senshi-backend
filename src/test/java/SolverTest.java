@@ -8,7 +8,6 @@ import fr.judo.shiai.solver.SenshiConstraintProviderSecondChoice;
 import fr.judo.shiai.solver.SenshiSolver;
 import fr.judo.shiai.solver.SenshiSolverSecondChoice;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Slf4j
 @SpringBootTest(classes = ShiaiApp.class)
 @ExtendWith(SpringExtension.class)
@@ -28,7 +29,7 @@ public class SolverTest {
     JudokaRepository judokaRepository;
 
     /**
-     * @param pool
+     * @param pool to be tested
      * @return true is the pool complies to hard constraints (pool's size and judoka's weights)
      */
     private static boolean isPoolValid(final Pool pool) {
@@ -38,7 +39,7 @@ public class SolverTest {
     }
 
     /**
-     * @param poolDispatchingSolution
+     * @param poolDispatchingSolution container of facts
      * @return true if all pools are valid
      */
     public boolean printSolution(PoolDispatchingSolution poolDispatchingSolution) {
@@ -63,22 +64,22 @@ public class SolverTest {
 
 
     /**
-     * @param judokas
-     * @return
+     * @param judokas to be dispatched within pools
+     * @return list of judokas pool
      */
     public List<Pool> getPoolList(final List<Judoka> judokas, final int size) {
         List<Pool> poolList = new ArrayList<>();
         for (int i = 0; i < judokas.size() / size
                 + (judokas.size() % size > 0 ? 1 : 0); i++) {
             Pool pool = new Pool();
-            pool.setId(Long.valueOf(i));
+            pool.setId((long) i);
             poolList.add(pool);
         }
         return poolList;
     }
 
     /**
-     * @param judokaList
+     * @param judokaList to be part of a test
      * @return true if the current problem is solved properly
      */
     public boolean makeTest(final List<Judoka> judokaList) {
@@ -92,27 +93,27 @@ public class SolverTest {
 
     @Test
     void testPoussins() {
-        Assertions.assertEquals(makeTest(judokaRepository.findPoussins()), true);
+        assertTrue(makeTest(judokaRepository.findPoussins()));
     }
 
     @Test
     void testBejamins() {
-        Assertions.assertEquals(makeTest(judokaRepository.findBenjamins()), true);
+        assertTrue(makeTest(judokaRepository.findBenjamins()));
     }
 
 
     @Test
     void testBejamins2nd() {
-        Assertions.assertEquals(makeSecondTest(judokaRepository.findBenjamins()), true);
+        assertTrue(makeSecondTest(judokaRepository.findBenjamins()));
     }
 
     @Test
     void testBejamines() {
-        Assertions.assertEquals(makeTest(judokaRepository.findBenjamines()), true);
+        assertTrue(makeTest(judokaRepository.findBenjamines()));
     }
 
     /**
-     * @param judokaList
+     * @param judokaList to be tested with second set of constraints
      * @return true if the current problem is solved properly
      */
     public boolean makeSecondTest(final List<Judoka> judokaList) {
