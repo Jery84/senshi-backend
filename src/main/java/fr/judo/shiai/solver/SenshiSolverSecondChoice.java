@@ -14,16 +14,16 @@ import java.util.Comparator;
 
 @Slf4j
 @Component
-public class SenshiSolver {
+public class SenshiSolverSecondChoice {
 
     private SolverFactory<PoolDispatchingSolution> solverFactory;
 
-    public SenshiSolver() {
-        log.info("Create solver");
+    public SenshiSolverSecondChoice() {
+        log.info("Create second choice's solver");
         solverFactory = SolverFactory.create(new SolverConfig()
                 .withSolutionClass(PoolDispatchingSolution.class)
                 .withEntityClasses(Judoka.class, Pool.class)
-                .withConstraintProviderClass(SenshiConstraintProvider.class)
+                .withConstraintProviderClass(SenshiConstraintProviderSecondChoice.class)
                 // The solver runs only for 5 seconds on this small dataset.
                 // It's recommended to run for at least 5 minutes ("5m") otherwise.
                 .withTerminationSpentLimit(Duration.ofSeconds(5)));

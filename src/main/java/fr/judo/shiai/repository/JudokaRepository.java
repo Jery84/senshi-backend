@@ -31,4 +31,8 @@ public interface JudokaRepository extends CrudRepository<Judoka, Integer> {
     @Modifying
     @Query("update Judoka j set j.present = false where j.category.name = :categoryName")
     void resetPresence(@Param("categoryName") String categoryName);
+
+    @Query("SELECT j FROM Judoka j WHERE j.present =  true AND j.category.name = 'BENJAMIN' and j.weight is not null and j.weight > 0")
+    List<Judoka> findBenjaminesAndBenjamins();
+
 }
