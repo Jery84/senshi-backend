@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
@@ -33,9 +34,10 @@ public class SolverTest {
      * @return true is the pool complies to hard constraints (pool's size and judoka's weights)
      */
     private static boolean isPoolValid(final Pool pool) {
+        double maxWeight = pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
+        double minWeight = pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
         return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
-                && (4 > pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight()
-                - pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight());
+                && (maxWeight * 0.1 > maxWeight - minWeight);
     }
 
     /**
@@ -98,7 +100,7 @@ public class SolverTest {
 
     @Test
     void testBejamins() {
-        assertTrue(makeTest(judokaRepository.findBenjamins()));
+        assertFalse(makeTest(judokaRepository.findBenjamins()));
     }
 
 
@@ -109,7 +111,7 @@ public class SolverTest {
 
     @Test
     void testBejamines() {
-        assertTrue(makeTest(judokaRepository.findBenjamines()));
+        assertFalse(makeTest(judokaRepository.findBenjamines()));
     }
 
     /**

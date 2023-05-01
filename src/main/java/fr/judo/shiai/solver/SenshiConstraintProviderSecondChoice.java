@@ -33,11 +33,11 @@ public class SenshiConstraintProviderSecondChoice implements ConstraintProvider 
                 // Hard constraints
                 // genderConflict(constraintFactory),
                 weightRangeConflict(constraintFactory),
-              //  categoryConflict(constraintFactory),
+                categoryConflict(constraintFactory),
                 minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
-              //  clubVariety(constraintFactory),
+                clubVariety(constraintFactory),
                 preferedPoolSize(constraintFactory)
 
         };
