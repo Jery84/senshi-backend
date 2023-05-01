@@ -122,6 +122,14 @@ public class SolverTest {
     void testBejaminesAndBenjamins2nd() {
         assertTrue(makeSecondTest(judokaRepository.findBenjaminesAndBenjamins()));
     }
+    @Test
+    void testAllPresentAndWeightedJudoka2nd() {
+        assertTrue(makeSecondTest(judokaRepository.findAllPresentAndWeightedJudoka()));
+    }
+    @Test
+    void testAllPresentAndWeightedJudoka() {
+        assertFalse(makeTest(judokaRepository.findAllPresentAndWeightedJudoka()));
+    }
 
     /**
      * @param judokaList to be tested with second set of constraints
