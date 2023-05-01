@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -167,7 +165,7 @@ public class PoolController {
         for (int i = 0; i < judokasCount / MAX_JUDOKAS_PER_POOL + 1; i++) {
             Pool pool = new Pool();
             pool.setId((long) i);
-            pool.setId(Long.valueOf(i + 1));
+            pool.setId((long) (i + 1));
             poolList.add(pool);
         }
         return poolList;
