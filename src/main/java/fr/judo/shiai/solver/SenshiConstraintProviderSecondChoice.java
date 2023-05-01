@@ -32,13 +32,13 @@ public class SenshiConstraintProviderSecondChoice implements ConstraintProvider 
         return new Constraint[]{
                 // Hard constraints
                 // genderConflict(constraintFactory),
-              //  weightRangeConflict(constraintFactory),
+                weightRangeConflict(constraintFactory),
               //  categoryConflict(constraintFactory),
                 minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
               //  clubVariety(constraintFactory),
-               // preferedPoolSize(constraintFactory)
+                preferedPoolSize(constraintFactory)
 
         };
     }
