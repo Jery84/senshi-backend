@@ -164,7 +164,6 @@ public class PoolController {
         List<Pool> poolList = new ArrayList<>();
         for (int i = 0; i < judokasCount / MAX_JUDOKAS_PER_POOL + 1; i++) {
             Pool pool = new Pool();
-            pool.setId((long) i);
             pool.setId((long) (i + 1));
             poolList.add(pool);
         }
