@@ -36,7 +36,7 @@ public class SolverTest {
     private static boolean isPoolValid(final Pool pool) {
         double maxWeight = pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
         double minWeight = pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
-        return (pool.getJudokaList().size() > 2 && pool.getJudokaList().size() < 5)
+        return (pool.getJudokaList().size() >= 2 && pool.getJudokaList().size() < 5)
                 && (maxWeight * 0.1 > maxWeight - minWeight);
     }
 
@@ -100,7 +100,7 @@ public class SolverTest {
 
     @Test
     void testBejamins() {
-        assertFalse(makeTest(judokaRepository.findBenjamins()));
+        assertTrue(makeTest(judokaRepository.findBenjamins()));
     }
 
 
@@ -112,6 +112,15 @@ public class SolverTest {
     @Test
     void testBejamines() {
         assertFalse(makeTest(judokaRepository.findBenjamines()));
+    }
+    @Test
+    void testBejaminesAndBenjamins() {
+        assertFalse(makeTest(judokaRepository.findBenjaminesAndBenjamins()));
+    }
+
+    @Test
+    void testBejaminesAndBenjamins2nd() {
+        assertTrue(makeSecondTest(judokaRepository.findBenjaminesAndBenjamins()));
     }
 
     /**
