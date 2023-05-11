@@ -60,7 +60,7 @@ public class PoolController {
             poolDispatchingSolution.setJudokaList(judokas);
             poolDispatchingSolution = senshiSolver.solve(poolDispatchingSolution);
 
-            if (!allPoolsAreValid(poolDispatchingSolution.getPoolList())) {
+            /*if (!allPoolsAreValid(poolDispatchingSolution.getPoolList())) {
                 pools.clear();
                 log.info("Recompute pools to try to get a better result");
                 poolDispatchingSolution = new PoolDispatchingSolution();
@@ -70,7 +70,7 @@ public class PoolController {
                 poolDispatchingSolution.setPoolList(pools);
                 poolDispatchingSolution.setJudokaList(judokas);
                 poolDispatchingSolution = senshiSolverSecondChoice.solve(poolDispatchingSolution);
-            }
+            }*/
         } catch (Exception e) {
             log.error(e.getMessage());
         }
