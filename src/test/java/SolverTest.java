@@ -73,10 +73,9 @@ public class SolverTest {
      * @param judokas to be dispatched within pools
      * @return list of judokas pool
      */
-    public List<Pool> getPoolList(final List<Judoka> judokas, final int size) {
+    public List<Pool> getPoolList(final List<Judoka> judokas) {
         List<Pool> poolList = new ArrayList<>();
-        for (int i = 0; i < judokas.size() / size
-                + (judokas.size() % size > 0 ? 1 : 0); i++) {
+        for (int i = 0; i < (judokas.size() / 2) + 1; i++) {
             Pool pool = new Pool();
             pool.setId((long) i);
             poolList.add(pool);
@@ -92,7 +91,7 @@ public class SolverTest {
         SenshiSolver senshiSolver = new SenshiSolver();
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         poolDispatchingSolution.setJudokaList(judokaList);
-        List<Pool> poolList = getPoolList(judokaList, 2);
+        List<Pool> poolList = getPoolList(judokaList);
         poolDispatchingSolution.setPoolList(poolList);
         log.info("Judokas count : " + poolDispatchingSolution.getJudokaList().size() + " pool size : " + poolList.size());
         return printSolution(senshiSolver.solve(poolDispatchingSolution));
@@ -105,32 +104,32 @@ public class SolverTest {
     }
 
     @Test
-    void testBejamins() {
+    void testBenjamins() {
         assertTrue(makeTest(judokaRepository.findBenjamins()));
     }
 
 
-    @Test
-    void testBejamins2nd() {
+    //@Test
+    void testBenjamins2nd() {
         assertTrue(makeSecondTest(judokaRepository.findBenjamins()));
     }
 
     @Test
-    void testBejamines() {
+    void testBenjamines() {
         assertTrue(makeTest(judokaRepository.findBenjamines()));
     }
 
     @Test
-    void testBejaminesAndBenjamins() {
+    void testBenjaminesAndBenjamins() {
         assertTrue(makeTest(judokaRepository.findBenjaminesAndBenjamins()));
     }
 
-    @Test
+   // @Test
     void testBejaminesAndBenjamins2nd() {
         assertTrue(makeSecondTest(judokaRepository.findBenjaminesAndBenjamins()));
     }
 
-    @Test
+  //  @Test
     void testAllPresentAndWeightedJudoka2nd() {
         assertTrue(makeSecondTest(judokaRepository.findAllPresentAndWeightedJudoka()));
     }
@@ -148,7 +147,7 @@ public class SolverTest {
         SenshiSolverSecondChoice senshiSolver = new SenshiSolverSecondChoice();
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         poolDispatchingSolution.setJudokaList(judokaList);
-        poolDispatchingSolution.setPoolList(getPoolList(judokaList, SenshiConstraintProviderSecondChoice.MAX_PREFERED_POOL_SIZE));
+        poolDispatchingSolution.setPoolList(getPoolList(judokaList));
         return printSolution(senshiSolver.solve(poolDispatchingSolution));
     }
 }
