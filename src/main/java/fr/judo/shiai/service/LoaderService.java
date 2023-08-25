@@ -65,32 +65,32 @@ public class LoaderService {
             }
         });
 
-//        // load the clubs
-//        genericLoad(CLUBS_FILE_PATH, Club.class, clubRepository, new BiConsumer<String[], Collection<Club>>() {
-//            @Override
-//            public void accept(String[] ligne, Collection<Club> clubs) {
-//                clubs.add(Club.builder().name(ligne[0]).build());
-//            }
-//        });
+        // load the clubs
+        genericLoad(CLUBS_FILE_PATH, Club.class, clubRepository, new BiConsumer<String[], Collection<Club>>() {
+            @Override
+            public void accept(String[] ligne, Collection<Club> clubs) {
+                clubs.add(Club.builder().name(ligne[0]).build());
+            }
+        });
 
-        // load the judokas
-//        genericLoad(JUDOKAS_FILE_PATH, Judoka.class, judokaRepository, new BiConsumer<String[], Collection<Judoka>>() {
-//            @Override
-//            public void accept(String[] ligne, Collection<Judoka> judokas) {
-//                judokas.add(Judoka.builder()
-//                        .id(Integer.parseInt(ligne[0]))
-//                        .gender(Gender.valueOf(ligne[1]))
-//                        .firstName(ligne[2])
-//                        .lastName(ligne[3])
-//                        .club(clubRepository.findById(Long.parseLong(ligne[4])).get())
-//                        .birthDate(parseDate(ligne[5]))
-//                        .weight(Strings.isEmpty(ligne[6]) ? 0 : Double.parseDouble(ligne[6]))
-//                        .license(ligne[7])
-//                        .category(categoryRepository.findById(ligne[8]).get())
-//                        .present(ligne[9].equals("Y"))
-//                        .build());
-//            }
-//        });
+       //  load the judokas
+        genericLoad(JUDOKAS_FILE_PATH, Judoka.class, judokaRepository, new BiConsumer<String[], Collection<Judoka>>() {
+            @Override
+            public void accept(String[] ligne, Collection<Judoka> judokas) {
+                judokas.add(Judoka.builder()
+                        .id(Integer.parseInt(ligne[0]))
+                        .gender(Gender.valueOf(ligne[1]))
+                        .firstName(ligne[2])
+                        .lastName(ligne[3])
+                        .club(clubRepository.findById(Long.parseLong(ligne[4])).get())
+                        .birthDate(parseDate(ligne[5]))
+                        .weight(Strings.isEmpty(ligne[6]) ? 0 : Double.parseDouble(ligne[6]))
+                        .license(ligne[7])
+                        .category(categoryRepository.findById(ligne[8]).get())
+                        .present(ligne[9].equals("Y"))
+                        .build());
+            }
+        });
     }
 
 

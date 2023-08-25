@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
@@ -34,10 +34,14 @@ public class SolverTest {
      * @return true is the pool complies to hard constraints (pool's size and judoka's weights)
      */
     private static boolean isPoolValid(final Pool pool) {
-        double maxWeight = pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
-        double minWeight = pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
-        return (pool.getJudokaList().size() >= 2 && pool.getJudokaList().size() < 5)
-                && (maxWeight * 0.1 > maxWeight - minWeight);
+        if (pool.getJudokaList() != null && pool.getJudokaList().size() > 0) {
+            double maxWeight = pool.getJudokaList().stream().max(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
+            double minWeight = pool.getJudokaList().stream().min(Comparator.comparing(Judoka::getWeight)).orElseThrow(IllegalStateException::new).getWeight();
+            return (pool.getJudokaList().size() >= 2 && pool.getJudokaList().size() < 5)
+                    && (maxWeight * 0.1 > maxWeight - minWeight);
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -88,7 +92,9 @@ public class SolverTest {
         SenshiSolver senshiSolver = new SenshiSolver();
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
         poolDispatchingSolution.setJudokaList(judokaList);
-        poolDispatchingSolution.setPoolList(getPoolList(judokaList, SenshiConstraintProvider.MAX_PREFERED_POOL_SIZE));
+        List<Pool> poolList = getPoolList(judokaList, 2);
+        poolDispatchingSolution.setPoolList(poolList);
+        log.info("Judokas count : " + poolDispatchingSolution.getJudokaList().size() + " pool size : " + poolList.size());
         return printSolution(senshiSolver.solve(poolDispatchingSolution));
     }
 
@@ -111,24 +117,27 @@ public class SolverTest {
 
     @Test
     void testBejamines() {
-        assertFalse(makeTest(judokaRepository.findBenjamines()));
+        assertTrue(makeTest(judokaRepository.findBenjamines()));
     }
+
     @Test
     void testBejaminesAndBenjamins() {
-        assertFalse(makeTest(judokaRepository.findBenjaminesAndBenjamins()));
+        assertTrue(makeTest(judokaRepository.findBenjaminesAndBenjamins()));
     }
 
     @Test
     void testBejaminesAndBenjamins2nd() {
         assertTrue(makeSecondTest(judokaRepository.findBenjaminesAndBenjamins()));
     }
+
     @Test
     void testAllPresentAndWeightedJudoka2nd() {
         assertTrue(makeSecondTest(judokaRepository.findAllPresentAndWeightedJudoka()));
     }
+
     @Test
     void testAllPresentAndWeightedJudoka() {
-        assertFalse(makeTest(judokaRepository.findAllPresentAndWeightedJudoka()));
+        assertTrue(makeTest(judokaRepository.findAllPresentAndWeightedJudoka()));
     }
 
     /**
