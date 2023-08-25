@@ -56,7 +56,7 @@ public class SolverTest {
             res = res && isPoolValid(pool);
             judokasCount = judokasCount + pool.getJudokaList().size();
             for (Judoka judoka : pool.getJudokaList()) {
-                log.info("--> " + judoka.getPool().getId() + " "
+                log.info("----> " + judoka.getPool().getId() + " "
                         + judoka.getGender() + " "
                         + judoka.getCategory().getName() + " "
                         + judoka.getWeight() + " "

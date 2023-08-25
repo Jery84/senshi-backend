@@ -31,13 +31,12 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
-                 genderConflict(constraintFactory),
+                genderConflict(constraintFactory),
                 weightRangeConflict(constraintFactory),
                 categoryConflict(constraintFactory),
-
+                minPoolSizeConflict(constraintFactory),
                 maxPoolSizeConflict(constraintFactory),
                 // Soft constraints
-                minPoolSizeConflict(constraintFactory),
                 clubVariety(constraintFactory),
                 preferedPoolSize(constraintFactory)
 
@@ -51,8 +50,8 @@ public class SenshiConstraintProvider implements ConstraintProvider {
     Constraint minPoolSizeConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Pool.class)
-                .filter(pool -> pool.getJudokaList()!=null && pool.getJudokaList().size() < MAX_PREFERED_POOL_SIZE)
-                .penalize(HardSoftScore.ONE_SOFT)
+                .filter(pool -> pool.getJudokaList() != null && pool.getJudokaList().size() == 1)
+                .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint(MIN_2_CONFLICT_CONSTRAINT_LABEL);
     }
 
