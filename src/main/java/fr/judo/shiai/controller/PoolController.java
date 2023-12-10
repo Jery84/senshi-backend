@@ -46,6 +46,15 @@ public class PoolController {
     @Autowired
     private SenshiSolverSecondChoice senshiSolverSecondChoice;
 
+    @PostMapping("/pools/addEmpty")
+    public Iterable<PoolDto> addEmptyPool() {
+
+        poolRepository.save(new Pool());
+
+        // ensure that we return the correct ids
+        return poolMapper.toDto(poolRepository.findAll());
+    }
+
     @PostMapping("/pools")
     public Iterable<PoolDto> computeAllPools() {
         PoolDispatchingSolution poolDispatchingSolution = new PoolDispatchingSolution();
