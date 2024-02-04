@@ -149,7 +149,20 @@ public class LoaderService {
 
                 String[] ligne;
                 Collection<Judoka> judokas = new ArrayList<>();
+                int i=0;
                 while ((ligne = csvReader.readNext()) != null) {
+
+                    i++;
+
+                    // detect parsing issue
+                    String fullLine = Arrays.stream(ligne).collect(Collectors.joining());
+                    if(fullLine.length() > 300) {
+                        log.warn("Line with id " + ligne[0] + " is surprisingly long, parsing error suspected, please check this records");
+                        // look for this regex ;""\w
+                        // look for this regex \w"\w
+                        // look for this regex \w"";
+                        // look for this regex \w"\w
+                    }
 
                     // filter on the clubName
                     String clubName = ligne[12].trim();
@@ -189,6 +202,7 @@ public class LoaderService {
                 }
 
                 judokaRepository.saveAll(judokas);
+                log.info(i + " records found");
                 log.info(judokas.size() + " judokas added");
 
                 csvReader.close();
